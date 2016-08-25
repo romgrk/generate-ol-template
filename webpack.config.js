@@ -2,9 +2,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    quote: './quoteApp.js',
-    stats: './stats/app.js',
-    tickets: './tickets/app.js',
+    index: './src/index.js',
   },
   output: {
     path: './build',
@@ -12,9 +10,7 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css" },
       { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'], },
-      { test: /\.tsx$/, exclude: /node_modules/, loaders: ['ts-loader'], }
     ]
   },
   plugins: [

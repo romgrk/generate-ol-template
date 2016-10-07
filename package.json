@@ -14,7 +14,10 @@
   "dependencies": {
     "babel-loader": "6.2.5",
     "babel-plugin-transform-object-rest-spread": "6.8.0",
+    "fs-extra": "0.30.0",
+    "isomorphic-fetch": "2.2.1",
     "jsdom": "9.4.2",
+    "mkdirp": "0.5.1",
     "node-uuid": "1.4.7",
     "node-xml": "1.0.2",
     "xml": "1.0.1"

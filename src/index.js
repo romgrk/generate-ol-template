@@ -168,6 +168,7 @@ const getNewDeclaration = (options) => ({
 })
 
 const getNewManifest = (options) => {
+  const images = options.images.map(img);
   const scripts = getScriptsDeclaration(options.scripts);
   const stylesheets = getStylesheetsDeclaration(options.stylesheets);
   const section = getNewSection(options.index, options);
@@ -280,9 +281,6 @@ let body = '';
 const readHTML = (err, window) => {
   const $ = window.$;
 
-  title = $('head title').text();
-  body = $('body').html();
-
   $('head link[rel=stylesheet]').each(function (i, s) {
     stylesheets.push($(this).attr('href'));
   });
@@ -292,19 +290,27 @@ const readHTML = (err, window) => {
   });
 
   $('img[src]').each(function () {
-    images.push($(this).attr('src'))
+    const src = $(this).attr('src');
+    if (!isRemote(src)) {
+      images.push(src);
+      $(this).attr('src', join('images', basename(src)));
+    }
   })
 
 
+  log(config);
   log(body.length);
-
   log(scripts);
   log(stylesheets);
 
 
   makeFileStructure(config.out);
 
+  title = $('head title').text();
+  body = $('body').html();
+
   const html_base = dirname(config.main);
+  images      = copyResources(config.out, html_base, images, 'images');
   scripts     = copyResources(config.out, html_base, scripts, 'js');
   stylesheets = copyResources(config.out, html_base, stylesheets, 'css');
 
@@ -316,15 +322,13 @@ const readHTML = (err, window) => {
   const context = id(index + '-context')
   fs.writeFileSync(join(config.out, index), body);
 
-  const declaration = getNewDeclaration({index, title, scripts, stylesheets, context});
+  const declaration = getNewDeclaration({index, title, images, scripts, stylesheets, context});
   fs.writeFileSync(join(config.out, 'index.xml'), xml(declaration, xmlOptions))
 
-  zip(config.out, `${config.out}.zip`, (err) => {
+  zip(config.out, `${config.out}.OL-template`, (err) => {
     console.log(err || 'Done.')
   })
 }
-
-log(config);
 
 jsdom(config.main, ['http://code.jquery.com/jquery.js'], readHTML);
 

@@ -10,6 +10,7 @@ const { join, basename, dirname } = require('path');
 const util = require('util');
 const jsdom = require('jsdom').env;
 const xml = require('xml');
+const zip = require('zip-folder');
 const uuid = require('node-uuid');
 
 const log = (...args) => {
@@ -22,7 +23,7 @@ const uuidByFilename = {};
 const id = (filename) => {
   if (!uuidByFilename[filename])
     uuidByFilename[filename] = uuid.v4();
-  return uuidByFilename[filename];
+  return `res-${uuidByFilename[filename]}`;
 }
 
 const isRemote = (path) =>
@@ -37,27 +38,32 @@ const children = (obj) => {
     return [obj];
   const res = [];
   for (let key in obj) {
-    if (key == '_attr')
+    if (key == '_attr') {
       res.push({ [key]: obj[key] });
-    else
-      res.push({ [key]: children(obj[key]) });
+      continue;
+    }
+    if (Array.isArray(obj[key])) {
+      obj[key].forEach(v => res.push({ [key]: v }))
+      continue;
+    }
+    res.push({ [key]: children(obj[key]) });
   }
   return res;
 }
 
 
 const img = (filename) => ({ image: [
-    attr({ id: `res-${id(filename)}` })
+    attr({ id: id(filename) })
   , { location: [filename] }
 ]})
 
 const js = (filename) => ({ javascript: [
-    attr({ id: `res-${id(filename)}` })
+    attr({ id: id(filename) })
   , { location: [filename] }
 ]})
 
 const remoteJs = (filename) => ({ remoteJavascript: [
-    attr({ id: `res-${id(filename)}` })
+    attr({ id: id(filename) })
   , { location: [filename] }
   , { async: 'false' }
   , { defer: 'false' }
@@ -65,30 +71,30 @@ const remoteJs = (filename) => ({ remoteJavascript: [
 ]})
 
 const css = (filename) => ({ stylesheet: [
-    attr({ id: `res-${id(filename)}` })
+    attr({ id: id(filename) })
   , { location: [filename] }
 ]})
 
 const remoteCss = (filename) => ({ remoteStylesheet: [
-    attr({ id: `res-${id(filename)}` })
+    attr({ id: id(filename) })
   , { location: [filename] }
   , { cachedCotg: 'false' }
 ]})
 
-const context = (filename) => ({
+const getNewContext = (res, filename) => ({
   context: children({
-      _attr: { id: `res-${id(filename)}` }
+      _attr: { id: res }
     , type: 'WEB'
-    , section: ''
-    , defSection: ''
+    , section: id(filename)
+    , defSection: id(filename)
   })
 })
 
-const section = (filename, options) => ({
+const getNewSection = (filename, options) => ({
   section: children({
-      _attr: { id: `res-${id(filename)}` }
+      _attr: { id: id(filename) }
     , location: filename
-    , context: '' // TODO
+    , context: options.context
     , name: '' // TODO
     , size: {
       name: 'Custom'
@@ -105,10 +111,10 @@ const section = (filename, options) => ({
     , 'right-bleed': '3mm'
     , 'bottom-bleed': '3mm'
     , 'zoomLevel': '100%'
-    , styleSheetOrder: 'res-bc80c408-5695-48a8-acf8-4b24d1ae88e2'
-    , includedStyleSheets: 'res-d7560534-e921-495f-97c6-f271e277db49'
-    , javaScriptOrder: 'res-ae4e5e55-6e2a-4604-8b2d-bdf53e10446b'
-    , includedJavaScripts: 'res-b7f8c42a-bbb3-4a45-a4eb-4a7b288e4977'
+    , styleSheetOrder: options.stylesheets.map(id)
+    , includedStyleSheets: options.stylesheets.map(id)
+    , javaScriptOrder: options.scripts.map(id)
+    , includedJavaScripts: options.scripts.map(id)
     , finishing: {
         binding: {
             style: 'NONE'
@@ -121,7 +127,7 @@ const section = (filename, options) => ({
     }
     , sectionBackground: ''
     , duplex: 'false'
-    , 'web-pageTitle': ''
+    , 'web-pageTitle': options.title
     , guides: ''
     , tumble: 'false'
     , facingPages: 'false'
@@ -130,7 +136,7 @@ const section = (filename, options) => ({
   }
 )})
 
-const getNewIndex = (options) => ({
+const getNewDeclaration = (options) => ({
   package: [
     attr({
       schemaVersion:          "1.0.0.19"
@@ -161,29 +167,48 @@ const getNewIndex = (options) => ({
   ]
 })
 
-const getNewManifest = (options) => ({
-  manifest: [
-    { colorProfiles: [] }
-    , { colorSpaces: [] }
-    , { colorTints: [] }
-    , { colors: [] }
-    , { contexts: [] }
-    , { fontDefinitions: [] }
-    , { fonts: [] }
-    , { images: [] }
-    , { javascripts: getScriptsDeclaration(options.scripts) }
-    , { masters: [] }
-    , { medias: [] }
-    , { sections: [section('yo.html')] }
-    , { stylesheets: getStylesheetsDeclaration(options.stylesheets) }
-  ]
-})
+const getNewManifest = (options) => {
+  const scripts = getScriptsDeclaration(options.scripts);
+  const stylesheets = getStylesheetsDeclaration(options.stylesheets);
+  const section = getNewSection(options.index, options);
+  return {
+    manifest: [
+        { colorProfiles: [] }
+      , { colorSpaces: [
+          { colorSpace: [
+            { _attr: { id: 'res-a2f841c3-fb54-4bac-972e-163db60e8852' } }
+            , { colorSpaceType: '2' }
+            , { name: 'CMYK' }
+          ] }
+          , { colorSpace: [
+            { _attr: { id: 'res-7a90ac9b-ca69-4735-825b-ff7c72f8a295' } }
+            , { colorSpaceType: '1' }
+            , { name: 'RGB' }
+          ] }
+        ] }
+      , { colorTints: [] }
+      , { colors: [] }
+      , { contexts: [getNewContext(options.context, options.index)] }
+      , { fontDefinitions: [] }
+      , { fonts: [] }
+      , { images: [] }
+      , { javascripts: scripts }
+      , { masters: [] }
+      , { medias: [] }
+      , { sections: [section] }
+      , { stylesheets: stylesheets }
+    ]
+  }
+}
+
+const sortResources = (files) =>
+  files.filter(f => !isRemote(f)).concat(files.filter(isRemote))
 
 const getScriptsDeclaration = (files) =>
-  files.map(f => isRemote(f) ? remoteJs(f) : js(f))
+  sortResources(files).map(f => isRemote(f) ? remoteJs(f) : js(f))
 
 const getStylesheetsDeclaration = (files) =>
-  files.map(f => isRemote(f) ? remoteCss(f) : css(f))
+  sortResources(files).map(f => isRemote(f) ? remoteCss(f) : css(f))
 
 
 // FileSystem manipulation
@@ -207,23 +232,23 @@ const structure = {
 
 const makeFileStructure = (path) => {
   fs.ensureDirSync(path);
-  fs.mkdirsSync(join(path, 'documents', 'snippets'));
-  fs.mkdirsSync(join(path, 'documents', 'color-profiles'));
-  fs.mkdirsSync(join(path, 'documents', 'generated'));
-  fs.mkdirsSync(join(path, 'documents', 'fonts'));
-  fs.mkdirsSync(join(path, 'documents', 'css', 'external'));
-  fs.mkdirsSync(join(path, 'documents', 'images'));
-  fs.mkdirsSync(join(path, 'documents', 'js', 'external'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'snippets'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'color-profiles'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'generated'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'fonts'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'css', 'external'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'images'));
+  fs.mkdirsSync(join(path, 'public', 'document', 'js', 'external'));
 }
 
 const copyResources = (path, base, files, ext) => {
   return files.map(file => {
     if (isRemote(file)) {
-      let filename = join('documents', ext, 'external', basename(file, `.${ext}`) + `.r${ext}`);
+      let filename = join('public', 'document', ext, 'external', basename(file, `.${ext}`) + `.r${ext}`);
       fs.writeFileSync(join(path, filename), file);
       return filename;
     } else {
-      let filename = join('documents', ext, basename(file));
+      let filename = join('public', 'document', ext, basename(file));
       fs.copySync(join(base, file), join(path, filename));
       return filename;
     }
@@ -270,28 +295,33 @@ const readHTML = (err, window) => {
     images.push($(this).attr('src'))
   })
 
-  log(scripts);
-  log(stylesheets);
 
-  let html_base = dirname(config.main);
-  scripts     = copyResources(config.out, html_base, scripts, 'js');
-  stylesheets = copyResources(config.out, html_base, stylesheets, 'css');
-
-  log(scripts);
-  log(stylesheets);
-
-  log(body);
   log(body.length);
-  //log(externalStylesheets);
 
-  let index = getNewIndex({scripts, stylesheets});
+  log(scripts);
+  log(stylesheets);
+
 
   makeFileStructure(config.out);
 
-  let section = `section-${uuid.v4()}.html`;
-  fs.writeFileSync(join(config.out, 'documents', section));
+  const html_base = dirname(config.main);
+  scripts     = copyResources(config.out, html_base, scripts, 'js');
+  stylesheets = copyResources(config.out, html_base, stylesheets, 'css');
 
-  //console.log(xml(index, xmlOptions));
+
+  log(scripts);
+  log(stylesheets);
+
+  const index = join('public', 'document', `section-${uuid.v4()}.html`);
+  const context = id(index + '-context')
+  fs.writeFileSync(join(config.out, index), body);
+
+  const declaration = getNewDeclaration({index, title, scripts, stylesheets, context});
+  fs.writeFileSync(join(config.out, 'index.xml'), xml(declaration, xmlOptions))
+
+  zip(config.out, `${config.out}.zip`, (err) => {
+    console.log(err || 'Done.')
+  })
 }
 
 log(config);

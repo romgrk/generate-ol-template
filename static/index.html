@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html section="Quote" dpi="96" scale="1.0" style="transform-origin: 0px 0px 0px; transform: scale(1) translate(6px, 6px); width: 100%;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"><meta name="media-single"><meta name="media-first"><meta name="media-middle"><meta name="media-last"><script src="https://code.jquery.com/jquery-2.2.2.min.js"></script><script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-cookies.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.0.0-beta.5/angular-moment.min.js"></script><script src="js/external/angular-ui-sortable.min.js"></script><script src="js/external/jQuery-Mask-Plugin.min.js"></script><script src="js/quoteApp.js"></script><script src="js/resources/quoteData.js"></script><script src="js/controllers/quote.controller.js"></script><script src="js/controllers/freight.controller.js"></script><script src="js/controllers/quoteItems.controller.js"></script><script src="js/directives/ajax-select.directive.js"></script><script src="js/directives/currency-directive.js"></script><script src="js/directives/date-format.directive.js"></script><script src="js/directives/focus-item.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.min.js"></script><link type="text/css" rel="stylesheet" href="css/quote_styles.css"><link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css"><link type="text/css" rel="stylesheet" href="generated/__ol__font_definitions.css"><link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker3.min.css"></head><body style="" spellcheck="false" contenteditable="false"><div ng-controller="quoteCtrl as quote" ng-app="quoteApp">
+    <!-- Modal -->
+    <div id="loadingModal" class="modal fade" role="dialog" aria-labelledby="loadingModal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Loading ...</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" style="width: 100%" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav id="QuoteNavbar" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" rel="home" href="#"><img src="images/AppliedHandlingLogo.jpg" alt="Applied Handling - Back to menu" ng-if="quote.quoteData.company == 'applied'"><img src="images/DacoLogo.jpg" alt="DACO - Back to menu" ng-if="quote.quoteData.company == 'daco' || !quote.quoteData.company"></a>
+            </div>
+            <h4 class="navbar-text"><span ng-if="quote.quoteData.type == 'q' ">Project Quote and Cost Review (#WQ{{quote.quoteData.id}})</span> <span ng-if="quote.quoteData.type == 'o'">
+                Sales order (#WS{{quote.quoteData.id}})</span><span ng-if="quote.quoteData.type == 'f'"> Confirmed sales order (#WF{{quote.quoteData.id}})</span> </h4>
+            <ul class="navbar-right nav navbar-nav">
+                <li ng-if="quote.quoteData.type == 'o'"><button class="btn btn-primary navbar-btn" data-message="Order created!" ng-click="quote.submitOrder($event)" data-placement="bottom" type="button"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Submit Order</button></li>
+                <li ng-if="quote.quoteData.type == 'q' || !quote.quoteData.type"><button class="btn btn-primary navbar-btn" ng-click="quote.createOrder($event)" type="button"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Create Order</button></li>
+                <li>
+                    <div class="btn-group">
+                        <button class="btn btn-primary navbar-btn manual-tooltip" data-message="Quote has been sent" ng-click="quote.sendQuote($event)" data-placement="bottom" type="button"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                             PDF to my email</button>
+                        <button class="btn btn-primary dropdown-toggle navbar-btn" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" type="button"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a ng-click="quote.sendQuote($event, 's')" href="#">Send to Shepard</a></li>
+                            <li><a ng-click="quote.sendQuote($event, 'r')" href="#">Send to sales rep</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar end -->
+    <div class="container-fluid">
+        <form id="mainForm" name="mainForm" action="">
+            <input id="currentUsername" name="currentUsername" type="hidden">
+            <div class="row">
+                <div class="col-xs-12 form-inline">
+                    <div class="text-right p-5">
+                        <div class="form-group">
+                            <label for="quoteShepard">Shepard</label>
+                            <select id="quoteShepard" class="form-control" ng-model="quote.quoteData.infos.shepard" ng-options="user.user as (user.firstName + ' ' + user.lastName) for user in quote.shepards">
+                                <option value="">Select a user</option>
+                                <!-- <option ng-value="user.user" ng-repeat="user in quote.shepards">{{user.firstName}} {{user.lastName}}</option> -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteRep">Sales rep</label>
+                            <select id="quoteRep" class="form-control" ng-model="quote.quoteData.infos.salesRep" ng-options="user.user as (user.firstName + ' ' + user.lastName) for user in quote.salesReps">
+                                <option value="">Select a user</option>
+                                <!-- <option ng-value="user.user" data-territory="{{user.territory1}}" ng-repeat="user in quote.salesReps">{{user.firstName}} {{user.lastName}}</option> -->
+                            </select>
+                        </div>
+                           <i class="fa fa-clock-o"></i><span><b> Created on </b>{{quote.quoteData.infos.created | 
+                        date:'MMMM d, y'}}<b> at</b> {{quote.quoteData.infos.created | date:' H:mm '}}<b> by </b>{{quote.quoteData.infos.creator}}</span> 
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                    <select id="OrderType" class="form-control" ng-model="quote.quoteData.infos.type">
+                        <option value="">Order Type</option>
+                        <option value="o">Outside Order</option>
+                        <option value="i">Inside Order</option>
+                    </select>
+                </div>
+                <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12 text-center">
+                    <label class="checkbox control-label" for="customOrder">
+                        <input id="customOrder" ng-model="quote.quoteData.infos.customOrder" type="checkbox">
+                         Custom Order </label>
+                </div>
+                <div id="ProjectDescription" class="input-group form-group form-inline text-left col-md-8 col-xs-12">
+                    <div class="input-group-addon"><i class="fa fa-sticky-note-o"></i></div>
+                    <input id="ProjectDescriptionTxt" class="form-control" ng-model="quote.quoteData.infos.description" placeholder="Enter a description for your project here..." type="text">
+                </div>
+            </div>
+            <br>
+            <div id="ShippingCoordinates" class="row form-horizontal">
+                <!-- 
+        	    ////////////////////////////////////
+        	   //// BILL TO : start
+        	  ////////////////////////////////////
+				-->
+                <div class="col-md-6">
+                    <!-- 
+                    <button ng-click="quote.newLoadQuote(101)" type="button">reload test mode</button>
+                    -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <label class="pull-right">
+                                <input id="billToNewCustomer" ng-model="quote.quoteData.billTo.new" type="checkbox">
+                                New Customer </label>
+                            <h3 class="panel-title"><strong>Bill to</strong></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group" ng-show="!quote.quoteData.billTo.new">
+                                <div class="col-sm-12">
+                                    <select id="billTo" class="customersList form-control input-sm col-sm-12" ng-model="quote.quoteData.billTo.id">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="quote.quoteData.billTo.new">
+                                <!--
+                            <div class="form-group">
+                            -->
+                                <div>
+                                    <label class="col-sm-2 control-label company-name-label" for="BTCompanyName">Company Name: </label>
+                                    <div class="col-sm-10">
+                                        <input id="BTCompanyName" class="form-control input-sm" ng-model="quote.quoteData.billTo.companyName" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="BTAddress">Address: </label>
+                                <div class="col-sm-10">
+                                    <input id="BTAddress" class="form-control input-sm" ng-model="quote.quoteData.billTo.address" ng-disabled="!quote.quoteData.billTo.new" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="BTCityStateZip">City, State ZIP: </label>
+                                <div class="col-sm-10">
+                                    <input id="BTCityStateZip" class="form-control input-sm" ng-model="quote.quoteData.billTo.cityStateZip" ng-disabled="!quote.quoteData.billTo.new" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="!quote.quoteData.billTo.new">
+                                <label class="col-sm-2 control-label" for="BTContact">Contact: </label>
+                                <div class="col-sm-10">
+                                    <!-- <select id="BTContact" class="form-control input-sm customerContactsList" ng-model="quote.quoteData.billTo.contactId"></select>  -->
+                                    <ajax-search-input id="BTContact" minimum-input-length="0" ng-model="quote.quoteData.billTo.contactId" query-param="{customerId: quote.quoteData.billTo.id}" url="{{CONFIG.API_URL}}/customers/contacts" selected-text="quoteItems.billTo.contactName">
+                                    </ajax-search-input>
+                                    <!-- -->
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="quote.quoteData.billTo.new">
+                                <!--
+                            <div class="form-group">
+                            -->
+                                <label class="col-sm-2 control-label" for="BTContact">Contact name: </label>
+                                <div class="col-sm-10">
+                                    <input id="BTContact" class="form-control input-sm" ng-model="quote.quoteData.billTo.contactName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="BTPhone">Phone: </label>
+                                <div class="col-md-4">
+                                    <input id="BTPhone" class="form-control input-sm" ng-model="quote.quoteData.billTo.phone" ng-disabled="!quote.quoteData.billTo.new" type="text">
+                                </div>
+                                <label class="col-sm-2 control-label" for="BTFax">Fax: </label>
+                                <div class="col-md-4">
+                                    <input id="BTFax" class="form-control input-sm" ng-model="quote.quoteData.billTo.fax" ng-disabled="!quote.quoteData.billTo.new" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="BTEmail">Email: </label>
+                                <div class="col-sm-10">
+                                    <input id="BTEmail" class="form-control input-sm" ng-model="quote.quoteData.billTo.email" ng-disabled="!quote.quoteData.billTo.new" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 
+			  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+        	   \\\\ BILL TO : end
+        	    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        	    ////////////////////////////////////
+        	   //// SHIP TO : start
+        	  ////////////////////////////////////
+				-->
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <label class="pull-right checkbox-label">     
+                                <input ng-model="quote.quoteData.shipTo.sameAsBillTo" type="checkbox">
+                                Same as Bill to </label>
+                            <label class="pull-right">
+                                <input id="shipToNewCustomer" ng-model="quote.quoteData.shipTo.new" ng-disabled="quote.quoteData.billTo.new" type="checkbox">
+                                New Ship TO </label>
+                            <h3 class="panel-title"><strong>Ship to</strong></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group" ng-show="!quote.quoteData.shipTo.new">
+                                <div class="col-sm-12" ng-disabled="quote.quoteData.shipTo.sameAsBillTo">
+                                    <select id="shipTo" class="customersShiptoList form-control input-sm col-sm-12" ng-model="quote.quoteData.shipTo.id">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="quote.quoteData.shipTo.new">
+                                <div>
+                                    <label class="col-sm-2 control-label company-name-label" for="STCompanyName">Company Name: </label>
+                                    <div class="col-sm-10">
+                                        <input id="STCompanyName" class="form-control input-sm" ng-model="quote.quoteData.shipTo.companyName" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-3"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="STAddress">Address: </label>
+                                <div class="col-sm-10">
+                                    <input id="BTAddress" class="form-control input-sm" ng-model="quote.quoteData.shipTo.address" ng-disabled="!quote.quoteData.shipTo.new" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="STCityStateZip">City, State ZIP: </label>
+                                <div class="col-sm-10">
+                                    <input id="BTCityStateZip" class="form-control input-sm" ng-model="quote.quoteData.shipTo.cityStateZip" ng-disabled="!quote.quoteData.shipTo.new" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="!quote.quoteData.shipTo.new">
+                                <label class="col-sm-2 control-label" for="STContact">Contact: </label>
+                                <div class="col-sm-10">
+                                    <!--  <select id="STContact" class="form-control input-sm customerContactsList" ng-model="quote.quoteData.shipTo.contactId"></select> -->
+                                    <ajax-search-input id="STContact" minimum-input-length="0" item-class="form-control input-sm customerContactsList" ng-model="quote.quoteData.shipTo.contactId" query-param="{customerId: quote.quoteData.billTo.id}" url="{{CONFIG.API_URL}}/customers/contacts" selected-text="quoteItems.shipTo.contactName">
+                                    </ajax-search-input>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="quote.quoteData.shipTo.new">
+                                <label class="col-sm-2 control-label" for="STContact">Contact name: </label>
+                                <div class="col-sm-10">
+                                    <input id="STContact" class="form-control input-sm" ng-model="quote.quoteData.billTo.contactName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="STPhone">Phone: </label>
+                                <div class="col-md-4">
+                                    <input id="STPhone" class="form-control input-sm" ng-model="quote.quoteData.shipTo.phone" ng-disabled="!quote.quoteData.shipTo.new" type="text">
+                                </div>
+                                <label class="col-sm-2 control-label" for="STFax">Fax: </label>
+                                <div class="col-md-4">
+                                    <input id="STFax" class="form-control input-sm" ng-model="quote.quoteData.shipTo.fax" ng-disabled="!quote.quoteData.shipTo.new" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="STEmail">Email: </label>
+                                <div class="col-sm-10">
+                                    <input id="STEmail" class="form-control input-sm" ng-model="quote.quoteData.shipTo.email" ng-disabled="!quote.quoteData.shipTo.new" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 
+			  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+        	   \\\\ SHIP TO : end
+        	    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+				-->
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div id="info" class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><strong>Info</strong></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="leadTime">Lead Time</label>
+                                        <div class="col-sm-7">
+                                            <input id="leadTime" class="form-control input-sm" ng-model="quote.quoteData.infos.leadTime" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="reqShipDate">Requested Ship Date</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control input-sm datepicker" ng-model="quote.quoteData.infos.reqShipDate" data-start-date="0" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="shippingMethodID">Shipping Method</label>
+                                        <div class="col-sm-7">
+                                            <select id="shippingMethodID" class="form-control input-sm" ng-model="quote.quoteData.infos.shippingMethodID" ajax-select="" url="{{CONFIG.API_URL}}/shipping/carriers" selected-text="quote.quoteData.infos.shippingMethod"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="shippingPoint">Shipping Point</label>
+                                        <div class="col-sm-7">
+                                            <select item-class="form-control input-sm" ng-model="quote.quoteData.infos.shippingPointID" ajax-select="" url="{{CONFIG.API_URL}}/shipping/points" selected-text="quote.quoteData.infos.shippingPoint"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="shippingTerms">Shipping Terms</label>
+                                        <div class="col-sm-7">
+                                            <select item-class="form-control input-sm" ng-model="quote.quoteData.infos.shippingTermsID" ajax-select="" url="{{CONFIG.API_URL}}/shipping/terms" selected-text="quote.quoteData.infos.shippingTerms"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="poNumber">PO Number</label>
+                                        <div class="col-sm-7">
+                                            <input id="poNumber" class="form-control input-sm" ng-model="quote.quoteData.infos.poNumber" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="taxStatusID">Tax Status</label>
+                                        <div class="col-sm-7">
+                                            <select id="taxStatusID" class="form-control input-sm" ng-model="quote.quoteData.infos.taxStatusID" ajax-select="" url="{{CONFIG.API_URL}}/tax" selected-text="quote.quoteData.infos.taxStatus"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="paymentTermsID">Payment Terms</label>
+                                        <div class="col-sm-7">
+                                            <select id="paymentTermsID" item-class="form-control input-sm" ng-model="quote.quoteData.infos.paymentTermsID" ajax-select="" url="{{CONFIG.API_URL}}/payment/terms" selected-text="quote.quoteData.infos.paymentTerms"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-5 control-label" for="gsaContract">GSA Contract</label>
+                                        <div class="col-sm-7">
+                                            <select id="gsaContract" class="form-control input-sm" ng-model="quote.quoteData.infos.gsaContract">
+                                                <option value="none">None</option>
+                                                <option value="GS-07F-5620P">GS-07F-5620P</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div id="notes" class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><strong>Notes</strong></h3>
+                        </div>
+                        <textarea ng-model="quote.quoteData.infos.specialInstructions" placeholder="Notes / Special Instructions:" rows="6" wrap="soft"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div id="notes" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <label>
+                            <input ng-model="quote.quoteData.project.isProject" type="checkbox">
+                            Project  </label>
+                    </h3>
+                </div>
+                <div class="panel-body" ng-if="quote.quoteData.project.isProject">
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-1">
+                            <label>
+                                <input ng-model="quote.quoteData.project.bInstallation" type="checkbox">
+                                Installation</label>
+                            <br>
+                            <label>
+                                <input ng-model="quote.quoteData.project.bElectricalReq" type="checkbox">
+                                Electrical requirements</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input ng-model="quote.quoteData.project.bEquipmentRental" type="checkbox">
+                                Equipment rental</label>
+                            <br>
+                            <label>
+                                <input ng-model="quote.quoteData.project.bSeismicCalcs" type="checkbox">
+                                Seismic Calcs</label>
+                            <br>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input ng-model="quote.quoteData.project.bFireSuppression" type="checkbox">
+                                Fire suppression</label>
+                            <br>
+                            <label>
+                                <input ng-model="quote.quoteData.project.premits" type="checkbox">
+                                Permits</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input ng-model="quote.quoteData.project.bHardware" type="checkbox">
+                                Hardware</label>
+                            <br>
+                            <label>
+                                <input ng-model="quote.quoteData.project.bMiscCosts" type="checkbox">
+                                Misc. Costs</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input ng-model="quote.quoteData.project.bHVAC" type="checkbox">
+                                HVAC Installation</label>
+                            <br>
+                            <label>
+                                <input ng-model="quote.quoteData.project.bMiscCosts" type="checkbox">
+                                Special inspections</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="QuoteItems" class="table table-striped" ng-controller="quoteItemsCtrl as quoteItems">
+                <thead>
+                    <tr>
+                        <th style="width:10px;"></th>
+                        <th style="width:62px">QTY</th> 
+                        <th style="width:150px">Item #</th> 
+                        <th style="width: 25%;">Description</th> 
+                        <th>Supplier/Vendor</th> 
+                        <th style="max-width: 200px;">Lead Time</th> 
+                        <th style="width:143px">Total Ship Weight</th> 
+                        <th style="width:123px">Unit Cost</th> 
+                        <th style="width:130px">Total Net Cost</th> 
+                        <th style="width:100px">GM (%)</th> 
+                        <th style="width:130px">Unit Sell Price</th> 
+                        <th style="width:143px">Total Sell Price</th> 
+                        <th style="width:49px"></th>
+                    </tr>
+                </thead>
+                <!-- 
+				||||||||||||||||||||||||||||||||||||||
+        		|| QUOTE . ITEMS
+        		||||||||||||||||||||||||||||||||||||||
+				-->
+                <tbody ui-sortable="" ng-model="quote.quoteData.items">
+                    <!-- LIST OF ITEM, ON QUOTEDATA.ITEMS -->
+                    <tr ng-repeat="item in quote.quoteData.items">
+                        <td><span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span></td>
+                        <td>
+                            <input class="text-right form-control mask-no-decimals" ng-model="item.qty" ng-change="quoteItems.quantityChanged($event, item)" type="number">
+                        </td>
+                        <td>
+                            <input class="form-control" ng-model="item.itemNum" disabled="disabled" type="text">
+                        </td>
+                        <td>
+                            <input class="form-control" ng-model="item.itemDescription" ng-focus="item.focusDesc = false" focus-item="item.focusDesc" type="text">
+                        </td>
+                        <td>
+                            <input class="form-control" ng-model="item.supplierVendor" ng-focus="item.focusVendor = false" focus-item="item.focusVendor" type="text">
+                        </td>
+                        <td>
+                            <input class="form-control" ng-model="item.leadTime" type="text">
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <input class="form-control" ng-change="quoteItems.totalShipWeightChanged($event, item)" ng-model="item.totalShipWeight" daco-currency="" ng-disabled="item.itemNum" type="text">
+                                <div class="input-group-addon">lbs</div> 
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-model="item.unitCost" ng-change="quoteItems.unitCostChanged($event, item)" daco-currency="" ng-disabled="item.itemNum" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-model="item.totalNetCost" ng-change="quoteItems.totalNetCostChanged($event, item)" daco-currency="" ng-disabled="item.itemNum" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group" ng-class="{'has-error': quoteItems.itemGMError(item)}">
+                            <div class="input-group">
+                                <input class="form-control" nb-digits-max="1" nb-digits-min="0" ng-model="item.grossMargin" ng-change="quoteItems.grossMarginChanged($event, item)" daco-currency="" type="text">
+                                <div class="input-group-addon">%</div> 
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-model="item.unitSellPrice" ng-change="quoteItems.unitSellPriceChanged($event, item)" daco-currency="" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-model="item.totalSellPrice" ng-change="quoteItems.totalSellPriceChanged($event, item)" daco-currency="" type="text">
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-default" data-toggle="tooltip" ng-click="quoteItems.deleteItem($event, $index)" title="Delete this row"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    <!-- NEW ITEM, ON QUOTEDATA.NEWITEMS -->
+                    <tr class="addItemRow">
+                        <td></td>
+                        <td>
+                            <input class="form-control mask-no-decimals text-right" value="1" ng-change="quoteItems.quantityChanged($event, quoteItems.newItem)" ng-minlength="1" ng-model="quoteItems.newItem.qty" type="number">
+                        </td>
+                        <td>
+                            <ajax-search-input id="selNewItem" item-class="form-control" ng-model="quoteItems.newItem.itemNum" ng-change="quoteItems." select-item="quoteItems.newItemSelect()" selected-item="quoteItems.newItem" dropdown-class="dropdown-wide" open-on-focus="" url="{{CONFIG.API_URL}}/inventory" text-attr="text">
+                            </ajax-search-input>
+                        </td>
+                        <td>
+                            <input class="form-control" ng-blur="quoteItems.newDescBlur($event)" ng-model="quoteItems.newItem.itemDescription" type="text">
+                        </td>
+                        <td>
+                            <input class="form-control" ng-model="quoteItems.newItem.supplierVendor" type="text">
+                        </td>
+                        <td>
+                            <input class="form-control" ng-model="quoteItems.newItem.leadTime" type="text">
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <input class="form-control" ng-model="quoteItems.newItem.totalShipWeight" ng-change="quoteItems.totalShipWeightChanged($event, quoteItems.newItem)" ng-disabled="quoteItems.newItem.itemNum" daco-currency="" type="text">
+                                <div class="input-group-addon">lbs</div> 
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-change="quoteItems.unitCostChanged($event, quoteItems.newItem)" ng-model="quoteItems.newItem.unitCost" daco-currency="" ng-disabled="quoteItems.newItem.itemNum" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-model="quoteItems.newItem.totalNetCost" ng-change="quoteItems.totalCostChanged($event, quoteItems.newItem)" daco-currency="" ng-disabled="quoteItems.newItem.itemNum" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <input class="form-control" nb-digits-max="1" nb-digits-min="0" ng-model="quoteItems.newItem.grossMargin" ng-change="quoteItems.grossMarginChanged($event, quoteItems.newItem)" daco-currency="" type="text">
+                                <div class="input-group-addon">%</div> 
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-change="quoteItems.unitSellPriceChanged($event, quoteItems.newItem)" ng-model="quoteItems.newItem.unitSellPrice" daco-currency="" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="form-control" ng-change="quoteItems.totalSellPriceChanged($event, quoteItems.newItem)" ng-model="quoteItems.newItem.totalSellPrice" daco-currency="" type="text">
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-primary" data-toggle="tooltip" ng-click="quoteItems.addItem($event)" title="Add this row"><i class="fa fa-plus"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr id="totalsRow">
+                        <td colspan="4"></td>
+                        <td colspan="1"></td>
+                        <td class="text-right vcenter-label"><strong>Totals</strong></td> 
+                        <td class="form-group">
+                            <div class="input-group">
+                                <input class="text-right form-control mask-currency" ng-model="quote.quoteData.totals.totalShipWeight" disabled="disabled" type="text">
+                                <div class="input-group-addon">lbs</div> 
+                            </div>
+                        </td>
+                        <td></td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="text-right form-control mask-currency" ng-model="quote.quoteData.totals.totalNetCost" disabled="disabled" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <input class="text-right form-control mask-currency" ng-model="quote.quoteData.totals.totalGM" disabled="disabled" type="text">
+                                <div class="input-group-addon">%</div> 
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="text-right form-control mask-currency" ng-model="quote.quoteData.totals.totalUnitSellPrice" disabled="disabled" type="text">
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div> 
+                                <input class="text-right form-control mask-currency" ng-model="quote.quoteData.totals.totalSellPrice" disabled="disabled" type="text">
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div id="notes" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <label>
+                            <input ng-model="quote.quoteData.freight.hasFreight" type="checkbox">
+                            Freight  </label>
+                    </h3>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12" ng-show="quote.quoteData.freight.hasFreight">
+                        <table id="FreightItems" class="table table-striped" ng-controller="freightCtrl as freight">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px"></th>
+                                    <th style="width: 200px">Item</th> 
+                                    <th>Carrier</th> 
+                                    <th>Description</th> 
+                                    <th style="width: 143px">Freight cost</th> 
+                                    <th style="width: 101px">GM (%)</th> 
+                                    <th style="width: 143px">Freight Sale Price</th> 
+                                    <th style="width: 49px"></th>
+                                </tr>
+                            </thead>
+                            <tbody ui-sortable="" ng-model="quote.quoteData.freight.items">
+                                <tr ng-repeat="item in quote.quoteData.freight.items">
+                                    <td class="text-center vcenter-label">{{$index + 1}}</td> 
+                                    <td>{{item.itemNum}}</td> 
+                                    <td>
+                                        <input class="form-control" ng-model="item.carrier" type="text">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" ng-model="item.description" type="text">
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">$</div> 
+                                            <input class="form-control " ng-model="item.cost" ng-change="freight.freightCostChanged(item)" daco-currency="" type="text">
+                                        </div>
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <input class="form-control " ng-model="item.grossMargin" ng-change="freight.freightGMChanged(item)" daco-currency="" type="text">
+                                            <div class="input-group-addon">%</div> 
+                                        </div>
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">$</div> 
+                                            <input class="form-control " ng-model="item.salePrice" ng-change="freight.freightSalePriceChanged(item)" daco-currency="" type="text">
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a class="btn btn-default" data-toggle="tooltip" ng-click="freight.deleteFreight($event, $index)" title="Delete this row"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr class="addItemRow">
+                                    <td></td>
+                                    <td>
+                                        <ajax-search-input id="selNewItemFreight" item-class="form-control" ng-model="newFreight.itemNum" selected-item="newFreight" dropdown-class="dropdown-wide" open-on-focus="" url="{{CONFIG.API_URL}}/inventory" text-attr="text">
+                                        </ajax-search-input>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" ng-model="newFreight.carrier" type="text">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" ng-model="newFreight.description" type="text">
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">$</div> 
+                                            <input class="form-control " ng-model="newFreight.cost" ng-change="freight.freightCostChanged(newFreight)" daco-currency="" type="text">
+                                        </div>
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <input class="form-control " ng-model="newFreight.grossMargin" ng-change="freight.freightGMChanged(newFreight)" daco-currency="" type="text">
+                                            <div class="input-group-addon">%</div> 
+                                        </div>
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">$</div> 
+                                            <input class="form-control " ng-model="newFreight.salePrice" ng-change="freight.freightSalePriceChanged(newFreight)" daco-currency="" type="text">
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a class="btn btn-primary" data-toggle="tooltip" ng-click="freight.addFreight($event)" title="Add this row"><i class="fa fa-plus"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr id="freightTotalsRow">
+                                    <td colspan="3"></td>
+                                    <td class="text-right vcenter-label"><strong>Totals</strong></td> 
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">$</div> 
+                                            <input class="form-control" ng-model="quote.quoteData.freight.totalCost" disabled="disabled" daco-currency="" type="text">
+                                        </div>
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <input class="form-control" ng-model="quote.quoteData.freight.totalGM" disabled="disabled" daco-currency="" type="text">
+                                            <div class="input-group-addon">%</div> 
+                                        </div>
+                                    </td>
+                                    <td class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">$</div> 
+                                            <input class="form-control" ng-model="quote.quoteData.freight.totalSalePrice" disabled="disabled" daco-currency="" type="text">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-8 text-right">
+                    <h3><span class="text-right label label-info lead" for="billTotal"><strong>
+                        Total: $ {{quote.quoteData.totals.total | currency:""}}</strong></span></h3>
+                </div>
+            </div>
+        </form>
+    </div>
+</div></body></html>

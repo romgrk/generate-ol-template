@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package schemaVersion="1.0.0.19" htmlVersion="1.0.0.2" xmlns="http://www.objectiflune.com/connectschemas/Template" xsi:schemaLocation="http://www.objectiflune.com/connectschemas/Template http://www.objectiflune.com/connectschemas/Template/1_0_0_19.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <metadata>
+        <cmis>
+            <validFromDate>2016-03-11T09:31:49.904-08:00</validFromDate>
+            <validFromTime>2016-03-11T09:31:49.904-08:00</validFromTime>
+            <validUntilDate>2016-03-11T09:31:49.904-08:00</validUntilDate>
+            <validUntilTime>2016-03-11T09:31:49.904-08:00</validUntilTime>
+        </cmis>
+    </metadata>
+    <manifest>
+        <colorProfiles/>
+        <colorSpaces>
+            <colorSpace id="res-a2f841c3-fb54-4bac-972e-163db60e8852">
+                <colorSpaceType>2</colorSpaceType>
+                <name>CMYK</name>
+            </colorSpace>
+            <colorSpace id="res-7a90ac9b-ca69-4735-825b-ff7c72f8a295">
+                <colorSpaceType>1</colorSpaceType>
+                <name>RGB</name>
+            </colorSpace>
+        </colorSpaces>
+        <colorTints/>
+        <colors>
+            <color id="res-dae753df-bb31-4c31-9476-7351333b069b">
+                <name>Black</name>
+                <colorSpace>res-a2f841c3-fb54-4bac-972e-163db60e8852</colorSpace>
+                <values>0.0</values>
+                <values>0.0</values>
+                <values>0.0</values>
+                <values>1.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-a7bf5ce7-e8a1-4d75-9281-64842f4399d4">
+                <name>Cyan</name>
+                <colorSpace>res-a2f841c3-fb54-4bac-972e-163db60e8852</colorSpace>
+                <values>1.0</values>
+                <values>0.0</values>
+                <values>0.0</values>
+                <values>0.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-e836ee47-a7b4-4222-93ba-c8bcf7ad4d31">
+                <name>Magenta</name>
+                <colorSpace>res-a2f841c3-fb54-4bac-972e-163db60e8852</colorSpace>
+                <values>0.0</values>
+                <values>1.0</values>
+                <values>0.0</values>
+                <values>0.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-d05d2073-3539-456b-bf4d-11016b93eee8">
+                <name>WebBlue</name>
+                <colorSpace>res-7a90ac9b-ca69-4735-825b-ff7c72f8a295</colorSpace>
+                <values>0.0</values>
+                <values>0.0</values>
+                <values>1.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-aafdd8f9-db94-4180-841e-1b8923a83793">
+                <name>WebGreen</name>
+                <colorSpace>res-7a90ac9b-ca69-4735-825b-ff7c72f8a295</colorSpace>
+                <values>0.0</values>
+                <values>1.0</values>
+                <values>0.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-7a7b162d-351d-492e-8ee7-43da7a19b4ed">
+                <name>WebRed</name>
+                <colorSpace>res-7a90ac9b-ca69-4735-825b-ff7c72f8a295</colorSpace>
+                <values>1.0</values>
+                <values>0.0</values>
+                <values>0.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-5ef00a2f-aae6-4974-ac20-9f411258ea23">
+                <name>White</name>
+                <colorSpace>res-7a90ac9b-ca69-4735-825b-ff7c72f8a295</colorSpace>
+                <values>1.0</values>
+                <values>1.0</values>
+                <values>1.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+            <color id="res-e79d0920-cf21-46c7-be8a-83b69858ef67">
+                <name>Yellow</name>
+                <colorSpace>res-a2f841c3-fb54-4bac-972e-163db60e8852</colorSpace>
+                <values>0.0</values>
+                <values>0.0</values>
+                <values>1.0</values>
+                <values>0.0</values>
+                <spot>false</spot>
+                <systemColor>true</systemColor>
+                <autoName>false</autoName>
+            </color>
+        </colors>
+        <contexts>
+            <context id="res-85d8c452-f96d-4f4c-829b-b24dce100dcd">
+                <type>WEB</type>
+                <section>res-5ee0488a-3266-4505-82a9-b185f5be27aa</section>
+                <defSection>res-5ee0488a-3266-4505-82a9-b185f5be27aa</defSection>
+            </context>
+        </contexts>
+        <fontDefinitions/>
+        <fonts/>
+        <images>
+            <image id="res-55775f6a-51a8-415b-83b6-984473f94901">
+                <location>public/document/images/AppliedHandlingLogo.jpg</location>
+            </image>
+            <image id="res-8274e5da-f5a6-4deb-83cc-51fe02d80c0c">
+                <location>public/document/images/DacoLogo.jpg</location>
+            </image>
+        </images>
+        <javascripts>
+            <javascript id="res-e4e0ef03-3f70-445a-9bb5-c4f3e85e7e84">
+                <location>public/document/js/directives/ajax-select.directive.js</location>
+            </javascript>
+            <javascript id="res-f725587e-1978-475b-96a3-8bb463b2b556">
+                <location>public/document/js/external/angular-ui-sortable.min.js</location>
+            </javascript>
+            <javascript id="res-9a1ff59d-7035-4417-a5e5-4ab62a790108">
+                <location>public/document/js/directives/currency-directive.js</location>
+            </javascript>
+            <javascript id="res-956f05ba-e84d-4cdf-809d-3d88fb27b7d6">
+                <location>public/document/js/directives/date-format.directive.js</location>
+            </javascript>
+            <javascript id="res-a30aea32-a379-4df7-ae32-9d5058ce7218">
+                <location>public/document/js/directives/focus-item.js</location>
+            </javascript>
+            <javascript id="res-ead48cdb-4f43-4151-8354-42508ff7362f">
+                <location>public/document/js/controllers/freight.controller.js</location>
+            </javascript>
+            <javascript id="res-546674cd-fde9-4d59-aa3c-5ea33639d40e">
+                <location>public/document/js/external/jQuery-Mask-Plugin.min.js</location>
+            </javascript>
+            <javascript id="res-3208d3dc-4976-44f1-8b0e-b01ca9bd32d4">
+                <location>public/document/js/controllers/quote.controller.js</location>
+            </javascript>
+            <javascript id="res-6bcf4120-6768-4aa3-9718-01f14e0df61d">
+                <location>public/document/js/quoteApp.js</location>
+            </javascript>
+            <javascript id="res-d57e9185-52a8-4a6a-8f0a-b3aed99668c4">
+                <location>public/document/js/resources/quoteData.js</location>
+            </javascript>
+            <javascript id="res-ae4e5e55-6e2a-4604-8b2d-bdf53e10446b">
+                <location>public/document/js/controllers/quoteItems.controller.js</location>
+            </javascript>
+            <remoteJavascript id="res-49637d7f-a26a-4ac6-b1da-a7e510963253">
+                <location>public/document/js/external/angular-1.5.3.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-ba4f6329-9053-49d1-bb1e-fdfa9ccefc0d">
+                <location>public/document/js/external/angular-cookies-1.5.3.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-4d675b21-7c87-49ec-b599-b994101496de">
+                <location>public/document/js/external/angular-moment.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-1ec08e6d-f0c9-4df2-9bc5-441aca77231d">
+                <location>public/document/js/external/angular-resource-1.5.3.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-212afb1b-b95c-42c5-9bf0-047cf2f56bf2">
+                <location>public/document/js/external/bootstrap-datepicker.min.js.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-559f064a-9d5d-435b-8db2-817267500644">
+                <location>public/document/js/external/bootstrap.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-acd26d77-f7b7-4c7e-bad6-23fd315f2860">
+                <location>public/document/js/external/jquery-2.2.2.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-b27b54af-6e12-4353-a4c1-5a031c283b66">
+                <location>public/document/js/external/jquery-ui.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-343aca43-9bb3-47bf-bf2c-2dcec45431f7">
+                <location>public/document/js/external/moment.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+            <remoteJavascript id="res-b7f8c42a-bbb3-4a45-a4eb-4a7b288e4977">
+                <location>public/document/js/external/select2.min.rjs</location>
+                <async>false</async>
+                <defer>false</defer>
+                <cachedCotg>false</cachedCotg>
+            </remoteJavascript>
+        </javascripts>
+        <masters/>
+        <medias/>
+        <sections>
+            <section id="res-5ee0488a-3266-4505-82a9-b185f5be27aa">
+                <location>public/document/section-caa4dc0f-59df-47d1-b7aa-3be20ebb71b0.html</location>
+                <context>res-85d8c452-f96d-4f4c-829b-b24dce100dcd</context>
+                <name>Quote</name>
+                <size>
+                    <name>Custom</name>
+                    <width>100%</width>
+                    <height>100%</height>
+                </size>
+                <portrait>true</portrait>
+                <left-margin>0cm</left-margin>
+                <top-margin>0cm</top-margin>
+                <right-margin>0cm</right-margin>
+                <bottom-margin>0cm</bottom-margin>
+                <left-bleed>3mm</left-bleed>
+                <top-bleed>3mm</top-bleed>
+                <right-bleed>3mm</right-bleed>
+                <bottom-bleed>3mm</bottom-bleed>
+                <zoomLevel>100%</zoomLevel>
+                <styleSheetOrder>res-fd44f731-d33c-4052-8460-c4494fc20c9d</styleSheetOrder>
+                <styleSheetOrder>res-b74894c2-b2ab-4214-9134-2f3f10ca7f34</styleSheetOrder>
+                <styleSheetOrder>res-bc3c2b43-b56d-41e1-9bc3-8d5acc005d59</styleSheetOrder>
+                <styleSheetOrder>res-370397b2-424a-4e55-9c01-27f3d4df1f1b</styleSheetOrder>
+                <styleSheetOrder>res-65942793-5dc7-4e63-a0fc-dedc0c7836f6</styleSheetOrder>
+                <styleSheetOrder>res-d7560534-e921-495f-97c6-f271e277db49</styleSheetOrder>
+                <styleSheetOrder>res-bc80c408-5695-48a8-acf8-4b24d1ae88e2</styleSheetOrder>
+                <includedStyleSheets>res-d7560534-e921-495f-97c6-f271e277db49</includedStyleSheets>
+                <includedStyleSheets>res-b74894c2-b2ab-4214-9134-2f3f10ca7f34</includedStyleSheets>
+                <includedStyleSheets>res-fd44f731-d33c-4052-8460-c4494fc20c9d</includedStyleSheets>
+                <includedStyleSheets>res-0d00f114-1c5c-43b6-941b-8f012ac93d60</includedStyleSheets>
+                <includedStyleSheets>res-bc3c2b43-b56d-41e1-9bc3-8d5acc005d59</includedStyleSheets>
+                <javaScriptOrder>res-acd26d77-f7b7-4c7e-bad6-23fd315f2860</javaScriptOrder>
+                <javaScriptOrder>res-b27b54af-6e12-4353-a4c1-5a031c283b66</javaScriptOrder>
+                <javaScriptOrder>res-559f064a-9d5d-435b-8db2-817267500644</javaScriptOrder>
+                <javaScriptOrder>res-343aca43-9bb3-47bf-bf2c-2dcec45431f7</javaScriptOrder>
+                <javaScriptOrder>res-b7f8c42a-bbb3-4a45-a4eb-4a7b288e4977</javaScriptOrder>
+                <javaScriptOrder>res-49637d7f-a26a-4ac6-b1da-a7e510963253</javaScriptOrder>
+                <javaScriptOrder>res-ba4f6329-9053-49d1-bb1e-fdfa9ccefc0d</javaScriptOrder>
+                <javaScriptOrder>res-1ec08e6d-f0c9-4df2-9bc5-441aca77231d</javaScriptOrder>
+                <javaScriptOrder>res-4d675b21-7c87-49ec-b599-b994101496de</javaScriptOrder>
+                <javaScriptOrder>res-f725587e-1978-475b-96a3-8bb463b2b556</javaScriptOrder>
+                <javaScriptOrder>res-546674cd-fde9-4d59-aa3c-5ea33639d40e</javaScriptOrder>
+                <javaScriptOrder>res-6bcf4120-6768-4aa3-9718-01f14e0df61d</javaScriptOrder>
+                <javaScriptOrder>res-d57e9185-52a8-4a6a-8f0a-b3aed99668c4</javaScriptOrder>
+                <javaScriptOrder>res-3208d3dc-4976-44f1-8b0e-b01ca9bd32d4</javaScriptOrder>
+                <javaScriptOrder>res-ead48cdb-4f43-4151-8354-42508ff7362f</javaScriptOrder>
+                <javaScriptOrder>res-ae4e5e55-6e2a-4604-8b2d-bdf53e10446b</javaScriptOrder>
+                <includedJavaScripts>res-b7f8c42a-bbb3-4a45-a4eb-4a7b288e4977</includedJavaScripts>
+                <includedJavaScripts>res-49637d7f-a26a-4ac6-b1da-a7e510963253</includedJavaScripts>
+                <includedJavaScripts>res-acd26d77-f7b7-4c7e-bad6-23fd315f2860</includedJavaScripts>
+                <includedJavaScripts>res-559f064a-9d5d-435b-8db2-817267500644</includedJavaScripts>
+                <includedJavaScripts>res-4d675b21-7c87-49ec-b599-b994101496de</includedJavaScripts>
+                <includedJavaScripts>res-1ec08e6d-f0c9-4df2-9bc5-441aca77231d</includedJavaScripts>
+                <includedJavaScripts>res-212afb1b-b95c-42c5-9bf0-047cf2f56bf2</includedJavaScripts>
+                <includedJavaScripts>res-343aca43-9bb3-47bf-bf2c-2dcec45431f7</includedJavaScripts>
+                <includedJavaScripts>res-ba4f6329-9053-49d1-bb1e-fdfa9ccefc0d</includedJavaScripts>
+                <includedJavaScripts>res-b27b54af-6e12-4353-a4c1-5a031c283b66</includedJavaScripts>
+                <includedJavaScripts>res-ae4e5e55-6e2a-4604-8b2d-bdf53e10446b</includedJavaScripts>
+                <includedJavaScripts>res-956f05ba-e84d-4cdf-809d-3d88fb27b7d6</includedJavaScripts>
+                <includedJavaScripts>res-9a1ff59d-7035-4417-a5e5-4ab62a790108</includedJavaScripts>
+                <includedJavaScripts>res-d57e9185-52a8-4a6a-8f0a-b3aed99668c4</includedJavaScripts>
+                <includedJavaScripts>res-546674cd-fde9-4d59-aa3c-5ea33639d40e</includedJavaScripts>
+                <includedJavaScripts>res-e4e0ef03-3f70-445a-9bb5-c4f3e85e7e84</includedJavaScripts>
+                <includedJavaScripts>res-f725587e-1978-475b-96a3-8bb463b2b556</includedJavaScripts>
+                <includedJavaScripts>res-a30aea32-a379-4df7-ae32-9d5058ce7218</includedJavaScripts>
+                <includedJavaScripts>res-ead48cdb-4f43-4151-8354-42508ff7362f</includedJavaScripts>
+                <includedJavaScripts>res-6bcf4120-6768-4aa3-9718-01f14e0df61d</includedJavaScripts>
+                <includedJavaScripts>res-3208d3dc-4976-44f1-8b0e-b01ca9bd32d4</includedJavaScripts>
+                <finishing>
+                    <binding>
+                        <style>NONE</style>
+                        <edge>DEFAULT</edge>
+                        <type>DEFAULT</type>
+                        <angle>DEFAULT</angle>
+                        <item-count>0</item-count>
+                        <area>0cm</area>
+                    </binding>
+                </finishing>
+                <sectionBackground/>
+                <duplex>false</duplex>
+                <web-pageTitle>DACO / Applied - Quote and orders</web-pageTitle>
+                <guides/>
+                <tumble>false</tumble>
+                <facingPages>false</facingPages>
+                <sameSheetConfigForAll>false</sameSheetConfigForAll>
+                <masterSheets/>
+            </section>
+        </sections>
+        <snippets/>
+        <stylesheets>
+            <stylesheet id="res-370397b2-424a-4e55-9c01-27f3d4df1f1b">
+                <location>public/document/css/context_all_styles.css</location>
+            </stylesheet>
+            <stylesheet target-context="WEB" id="res-65942793-5dc7-4e63-a0fc-dedc0c7836f6">
+                <location>public/document/css/context_web_styles.css</location>
+            </stylesheet>
+            <stylesheet id="res-bc80c408-5695-48a8-acf8-4b24d1ae88e2">
+                <location>public/document/css/default.css</location>
+            </stylesheet>
+            <stylesheet id="res-bc3c2b43-b56d-41e1-9bc3-8d5acc005d59">
+                <location>public/document/css/quote_styles.css</location>
+            </stylesheet>
+            <remoteStylesheet id="res-0d00f114-1c5c-43b6-941b-8f012ac93d60">
+                <location>public/document/css/external/bootstrap-datepicker.rcss</location>
+                <cachedCotg>false</cachedCotg>
+            </remoteStylesheet>
+            <remoteStylesheet id="res-fd44f731-d33c-4052-8460-c4494fc20c9d">
+                <location>public/document/css/external/bootstrap.min.rcss</location>
+                <cachedCotg>false</cachedCotg>
+            </remoteStylesheet>
+            <remoteStylesheet id="res-b74894c2-b2ab-4214-9134-2f3f10ca7f34">
+                <location>public/document/css/external/font-awesome.min.rcss</location>
+                <cachedCotg>false</cachedCotg>
+            </remoteStylesheet>
+            <remoteStylesheet id="res-d7560534-e921-495f-97c6-f271e277db49">
+                <location>public/document/css/external/select2.min.rcss</location>
+                <cachedCotg>false</cachedCotg>
+            </remoteStylesheet>
+        </stylesheets>
+    </manifest>
+    <datamodelconfigadapter>
+        <dataTypes/>
+        <datamodel schemaVersion="1.0.0.3" name="registrePresence_XML" version="1">
+            <field type="string" lastValue="L'ENVOL DES LANGUES INC." name="NomEntreprise" required="true"/>
+            <field type="string" lastValue="ANGLAIS - Beginner 4" name="TitreCours" required="true"/>
+            <field type="string" lastValue="5083" name="NumeroCours" required="true"/>
+            <field type="string" lastValue="FRIOLET, Lizza" name="Formateur" required="true"/>
+            <field type="string" lastValue="4101" name="NoClient" required="true"/>
+            <field type="integer" lastValue="30" name="NbHeureContrat" required="true"/>
+            <field type="float" lastValue="30" name="NbHeuresRestant" required="true"/>
+            <field type="string" lastValue="28306" name="NoCertAgrement" required="true"/>
+            <field type="string" lastValue="TEST-16-001" name="Groupe" required="true"/>
+            <field type="string" lastValue="cotg1@groupeldl.com" name="GroupeCOTG" required="true"/>
+            <field type="string" lastValue="2016-01-18" name="DateDebut" required="true"/>
+            <field type="string" lastValue="Révisé 2012-08-31" name="Revision" required="true"/>
+            <field type="string" lastValue="Monday 8h-9h30" name="Horaire" required="true"/>
+            <field type="string" lastValue="Février 2016" name="MoisFR" required="true"/>
+            <field type="string" lastValue="February 2016" name="MoisEN" required="true"/>
+            <field type="string" lastValue="http://localhost:8080" name="baseURL" required="true"/>
+            <field type="string" lastValue="1.5" name="DureePrevue" required="true"/>
+            <table name="Livres" required="true">
+                <field type="string" lastValue="FRIOLET, Lizza" name="Participant" required="true"/>
+                <field type="string" lastValue="BG4" name="Titre" required="true"/>
+                <field type="string" lastValue="" name="Date" required="true"/>
+                <field type="string" lastValue="" name="Signature" required="true"/>
+            </table>
+            <table name="Participants" required="true">
+                <field type="string" lastValue="FRIOLET, Lizza" name="Participant" required="true"/>
+            </table>
+            <table name="Seances" required="true">
+                <field type="string" name="Date" required="true"/>
+                <field type="string" name="Duree" required="true"/>
+                <field type="string" name="InitialesFormateur" required="true"/>
+                <table name="Presences" required="true">
+                    <field type="string" name="NomComplet" required="true"/>
+                    <field type="string" name="TypePresence" required="true"/>
+                    <field type="string" name="Initiales" required="true"/>
+                    <field type="string" name="Raison" required="true"/>
+                </table>
+            </table>
+        </datamodel>
+    </datamodelconfigadapter>
+    <locale>
+        <source>SYSTEM</source>
+    </locale>
+    <colorSettings>
+        <colorManagement>false</colorManagement>
+        <renderingIntent>RELATIVE_COLORIMETRIC</renderingIntent>
+    </colorSettings>
+    <scripts>
+        <script control="false">
+            <enabled>true</enabled>
+            <findText></findText>
+            <name>Set JS constants</name>
+            <origin/>
+            <selectorText>head</selectorText>
+            <selectorType>QUERY</selectorType>
+            <source>var my_string = "&lt;script&gt;";
+my_string += "var backendUrl = '" + automation.jobInfos.JobInfo4 + "';\n";
+my_string += "var apiUrl = '" + automation.jobInfos.JobInfo5 + "';\n";
+my_string += "var currentUsername = '" + automation.jobInfos.JobInfo7 + "';\n";
+my_string += "&lt;/script&gt;";
+results.prepend(my_string);</source>
+        </script>
+    </scripts>
+</package>

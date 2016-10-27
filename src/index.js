@@ -19,6 +19,10 @@ const log = (...args) => {
   })
 }
 
+const opt = (value, defaultValue) =>
+  value == undefined ? defaultValue : value
+
+
 const uuidByFilename = {};
 const id = (filename) => {
   if (!uuidByFilename[filename])
@@ -29,7 +33,19 @@ const id = (filename) => {
 const isRemote = (path) =>
   /^(https?:)?\/\//.test(path) || /.r(js|css)$/.test(path)
 
+
 // XML generation
+
+const XML_CHAR_MAP = {
+  '<': '&lt;',
+  '>': '&gt;',
+  '&': '&amp;',
+  '"': '&quot;',
+  "'": '&apos;'
+};
+const escapeXml = (s) =>
+  s.replace(/[<>&"']/g, (ch) => XML_CHAR_MAP[ch] )
+
 
 const attr = (obj) => ({ _attr: obj });
 
@@ -81,15 +97,16 @@ const remoteCss = (filename) => ({ remoteStylesheet: [
   , { cachedCotg: 'false' }
 ]})
 
-const getNewScript = (source, options) => ({
+const getNewScript = (options) => ({
   script: [
-    attr({ control: false })
-  , { name: '' }
-  , { enabled: true }
-  , { findText: '' }
-  , { selectorText: '' }
-  , { selectorType: 'QUERY' }  // QUERY || (TEXT?)
-  , { source: source }
+    attr({ control: opt(options.control, false) })
+  , { enabled: opt(options.enabled, true) }
+  , { findText: opt(options.text, '') }
+  , { name: opt(options.name, '') }
+  , { origin: '' }
+  , { selectorText: opt(options.selector, '') }
+  , { selectorType: opt(options.type, 'QUERY') }  // QUERY || TEXT || QUERY_AND_TEXT
+  , { source: opt(options.source, '') }
   ]
 })
 
@@ -125,8 +142,8 @@ const getNewSection = (filename, options) => ({
     , 'zoomLevel': '100%'
     , styleSheetOrder: options.stylesheets.map(id)
     , includedStyleSheets: options.stylesheets.map(id)
-    , javaScriptOrder: options.scripts.map(id)
-    , includedJavaScripts: options.scripts.map(id)
+    , javaScriptOrder: options.javascripts.map(id)
+    , includedJavaScripts: options.javascripts.map(id)
     , finishing: {
         binding: {
             style: 'NONE'
@@ -175,13 +192,13 @@ const getNewDeclaration = (options) => ({
       { colorManagement: ['false'] }
       , { renderingIntent: ['RELATIVE_COLORIMETRIC'] }
     ]}
-    , { scripts: [] }
+    , { scripts: options.scripts.map(getNewScript) }
   ]
 })
 
 const getNewManifest = (options) => {
   const images = options.images.map(img);
-  const scripts = getScriptsDeclaration(options.scripts);
+  const javascripts = getScriptsDeclaration(options.javascripts);
   const stylesheets = getStylesheetsDeclaration(options.stylesheets);
   const section = getNewSection(options.index, options);
   return {
@@ -205,7 +222,7 @@ const getNewManifest = (options) => {
       , { fontDefinitions: [] }
       , { fonts: [] }
       , { images: [] }
-      , { javascripts: scripts }
+      , { javascripts: javascripts }
       , { masters: [] }
       , { medias: [] }
       , { sections: [section] }
@@ -268,10 +285,87 @@ const copyResources = (path, base, files, ext) => {
   })
 }
 
+
+// Template generation
+
+const generateOLTemplate = (input, output) => {
+  let title = '';
+  let images = [];
+  let javascripts = [];
+  let stylesheets = [];
+  let scripts = [];
+
+  let body = '';
+
+  const readHTML = (err, window) => {
+    const $ = window.$;
+
+    $('head link[rel=stylesheet]').each(function (i, s) {
+      stylesheets.push($(this).attr('href'));
+    });
+
+    $('head script[src]').each(function (i, s) {
+      javascripts.push($(this).attr('src'));
+    });
+
+    $('head script[connect]').each(function (i, s) {
+      const source   = escapeXml($(this).html());
+      const name     = $(this).attr('name');
+      const enabled  = $(this).attr('enabled');
+      const control  = $(this).attr('control');
+      const type     = $(this).attr('type');
+      const text     = $(this).attr('text');
+      const selector = $(this).attr('selector');
+      scripts.push({source, name, enabled, control, type, text, selector});
+    });
+
+    $('img[src]').each(function () {
+      const src = $(this).attr('src');
+      if (!isRemote(src)) {
+        images.push(src);
+        $(this).attr('src', join('images', basename(src)));
+      }
+    })
+
+
+    log(config);
+    log(body.length);
+
+    makeFileStructure(output);
+
+    title = $('head title').text();
+    body = $('body').html();
+
+    const html_base = dirname(input);
+    images      = copyResources(output, html_base, images, 'images');
+    javascripts = copyResources(output, html_base, javascripts, 'js');
+    stylesheets = copyResources(output, html_base, stylesheets, 'css');
+
+
+    log(javascripts);
+    log(stylesheets);
+    log(scripts);
+
+    const index = join('public', 'document', `section-${uuid.v4()}.html`);
+    const context = id(index + '-context')
+    fs.writeFileSync(join(output, index), body);
+
+    const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context});
+    fs.writeFileSync(join(output, 'index.xml'), xml(declaration, xmlOptions))
+
+    zip(output, `${output}.OL-template`, (err) => {
+      console.log(err || 'Done.')
+    })
+  }
+
+  jsdom(input, ['http://code.jquery.com/jquery.js'], readHTML);
+}
+
+
 // Config
 
 const config = {
-  main: process.argv[2] || '/home/romgrk/work/node_app/public/quote_section.html'
+  main: process.argv[2] || '/home/romgrk/projects/daco/public/quote_section.html'
   , out: './out'
 }
 
@@ -283,64 +377,4 @@ const xmlOptions = {
   , indent: '  '
 }
 
-let title = '';
-let images = [];
-let scripts = [];
-let stylesheets = [];
-
-let body = '';
-
-const readHTML = (err, window) => {
-  const $ = window.$;
-
-  $('head link[rel=stylesheet]').each(function (i, s) {
-    stylesheets.push($(this).attr('href'));
-  });
-
-  $('head script[src]').each(function (i, s) {
-    scripts.push($(this).attr('src'));
-  });
-
-  $('img[src]').each(function () {
-    const src = $(this).attr('src');
-    if (!isRemote(src)) {
-      images.push(src);
-      $(this).attr('src', join('images', basename(src)));
-    }
-  })
-
-
-  log(config);
-  log(body.length);
-  log(scripts);
-  log(stylesheets);
-
-
-  makeFileStructure(config.out);
-
-  title = $('head title').text();
-  body = $('body').html();
-
-  const html_base = dirname(config.main);
-  images      = copyResources(config.out, html_base, images, 'images');
-  scripts     = copyResources(config.out, html_base, scripts, 'js');
-  stylesheets = copyResources(config.out, html_base, stylesheets, 'css');
-
-
-  log(scripts);
-  log(stylesheets);
-
-  const index = join('public', 'document', `section-${uuid.v4()}.html`);
-  const context = id(index + '-context')
-  fs.writeFileSync(join(config.out, index), body);
-
-  const declaration = getNewDeclaration({index, title, images, scripts, stylesheets, context});
-  fs.writeFileSync(join(config.out, 'index.xml'), xml(declaration, xmlOptions))
-
-  zip(config.out, `${config.out}.OL-template`, (err) => {
-    console.log(err || 'Done.')
-  })
-}
-
-jsdom(config.main, ['http://code.jquery.com/jquery.js'], readHTML);
-
+generateOLTemplate(config.main, config.out);

@@ -81,6 +81,18 @@ const remoteCss = (filename) => ({ remoteStylesheet: [
   , { cachedCotg: 'false' }
 ]})
 
+const getNewScript = (source, options) => ({
+  script: [
+    attr({ control: false })
+  , { name: '' }
+  , { enabled: true }
+  , { findText: '' }
+  , { selectorText: '' }
+  , { selectorType: 'QUERY' }  // QUERY || (TEXT?)
+  , { source: source }
+  ]
+})
+
 const getNewContext = (res, filename) => ({
   context: children({
       _attr: { id: res }
@@ -259,7 +271,7 @@ const copyResources = (path, base, files, ext) => {
 // Config
 
 const config = {
-  main: '/home/romgrk/work/node_app/public/quote_section.html'
+  main: process.argv[2] || '/home/romgrk/work/node_app/public/quote_section.html'
   , out: './out'
 }
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<datamodel schemaVersion="1.0.0.4" name="ticket" version="1" xmlns="http://www.objectiflune.com/connectschemas/DataModelConfig" xsi:schemaLocation="http://www.objectiflune.com/connectschemas/DataModelConfig http://www.objectiflune.com/connectschemas/DataModelConfig/1_0_0_4.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <field type="string" lastValue="" name="ExtraData" required="true"/>
+    <field type="htmlstring" lastValue="Total" name="totalValue" required="true"/>
+    <field type="htmlstring" lastValue="ORDSTD99085663" name="orderID" required="true"/>
+    <field type="htmlstring" lastValue="" name="shepherd" required="true"/>
+    <field type="htmlstring" lastValue="8/12/2016" name="date" required="true"/>
+    <field type="htmlstring" lastValue="11:09:24 am" name="time" required="true"/>
+    <field type="htmlstring" lastValue="RENU MEDICAL, INC&lt;br /&gt;830 80TH ST SW, #100&lt;br /&gt;EVERETT, WA 98203" name="billTo" required="true"/>
+    <field type="htmlstring" lastValue="RENU MEDICAL, INC&lt;br /&gt;ERIK VILLA 425-353-1110 X 324&lt;br /&gt;830 80TH ST SW #100&lt;br /&gt;EVERETT, WA 98203" name="shipTo" required="true"/>
+    <field type="htmlstring" lastValue="PROPOSAL 0803JY" name="poNumber" required="true"/>
+    <field type="htmlstring" lastValue="" name="gsaNumber" required="true"/>
+    <field type="htmlstring" lastValue="Phone Number" name="phone" required="true"/>
+    <field type="htmlstring" lastValue="{&quot;orderID&quot;:&quot;ORDSTD99085663&quot;,&quot;shepherd&quot;:&quot;&quot;,&quot;date&quot;:&quot;8/12/2016&quot;,&quot;time&quot;:&quot;11:09:24 am&quot;,&quot;billTo&quot;:&quot;RENU MEDICAL, INC&lt;br /&gt;830 80TH ST SW, #100&lt;br /&gt;EVERETT, WA 98203&quot;,&quot;shipTo&quot;:&quot;RENU MEDICAL, INC&lt;br /&gt;ERIK VILLA 425-353-1110 X 324&lt;br /&gt;830 80TH ST SW #100&lt;br /&gt;EVERETT, WA 98203&quot;,&quot;poNumber&quot;:&quot;PROPOSAL 0803JY&quot;,&quot;gsaNumber&quot;:&quot;&quot;,&quot;shippingPoint&quot;:&quot;&quot;,&quot;leadTime&quot;:&quot;&quot;,&quot;shippingMethod&quot;:&quot;DELIVER&quot;,&quot;shippingTerms&quot;:&quot;&quot;,&quot;shipDate&quot;:&quot;01/01/1900&quot;,&quot;customerID&quot;:&quot;A-RENU0001&quot;,&quot;territoryManager&quot;:&quot;JEY41&quot;,&quot;paymentTerms&quot;:&quot;CREDIT CARD&quot;,&quot;customer&quot;:&quot;RENU MEDICAL, INC&quot;,&quot;company&quot;:&quot;daco&quot;,&quot;contact&quot;:&quot;Customer Contact&quot;,&quot;phone&quot;:&quot;Phone Number&quot;,&quot;weight&quot;:&quot;Total&quot;,&quot;totalValue&quot;:&quot;Total&quot;,&quot;items&quot;:[{&quot;qtyOrdered&quot;:10,&quot;qtyShipped&quot;:10,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;UNA01-G013319244-GREEN&quot;,&quot;value&quot;:145,&quot;uom&quot;:&quot;EACH&quot;,&quot;description&quot;:&quot;UPRIGHT - 44\&quot; D X 192\&quot; H - 3 X 3 CLOSED COLUMN 6\&quot; X 6\&quot; SIESMIC FOOT PLATE - TEARDROP -  NO SIDE HOLE&quot;,&quot;wts&quot;:141},{&quot;qtyOrdered&quot;:6,&quot;qtyShipped&quot;:6,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;XXX-120-4.5-5.375-U-ORG-USED&quot;,&quot;value&quot;:30,&quot;uom&quot;:&quot;Each&quot;,&quot;description&quot;:&quot;BEAM - 120\&quot; L - 4 1/2\&quot; - 5 3/8\&quot; FACE - 2 OR 3 STUD - U STUD - 1 5/8\&quot; STEP&quot;,&quot;wts&quot;:0},{&quot;qtyOrdered&quot;:42,&quot;qtyShipped&quot;:42,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;XXX-96-3.5-4.375-O-ORANGE-USED&quot;,&quot;value&quot;:16.25,&quot;uom&quot;:&quot;Each&quot;,&quot;description&quot;:&quot;BEAM - 96\&quot; L - 3 1/2\&quot; - 4 3/8\&quot; FACE - 2 OR 3 STUD - OVAL - 1 5/8\&quot; STEP&quot;,&quot;wts&quot;:0},{&quot;qtyOrdered&quot;:6,&quot;qtyShipped&quot;:0,&quot;qtyBO&quot;:6,&quot;id&quot;:&quot;ITC01-4458-BMEMM-4QA40E-GRAY&quot;,&quot;value&quot;:26,&quot;uom&quot;:&quot;EACH&quot;,&quot;description&quot;:&quot;WIRE DECK - 44\&quot; D X 58\&quot; - WATERFALL&quot;,&quot;wts&quot;:0},{&quot;qtyOrdered&quot;:42,&quot;qtyShipped&quot;:42,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;ITC01-4446-BMEMM-3QA40E-GRAY&quot;,&quot;value&quot;:18.5,&quot;uom&quot;:&quot;EACH&quot;,&quot;description&quot;:&quot;WIRE DECK - 44\&quot; D X 46\&quot; - WATERFALL&quot;,&quot;wts&quot;:22},{&quot;qtyOrdered&quot;:1,&quot;qtyShipped&quot;:1,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;CJI01-INSTALL&quot;,&quot;value&quot;:875,&quot;uom&quot;:&quot;Each&quot;,&quot;description&quot;:&quot;INSTALLATION&quot;,&quot;wts&quot;:0},{&quot;qtyOrdered&quot;:1,&quot;qtyShipped&quot;:1,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;BAS04-SEISMICCALCULATIONS&quot;,&quot;value&quot;:650,&quot;uom&quot;:&quot;Each&quot;,&quot;description&quot;:&quot;STAMPED ENGINEERING PACKET&quot;,&quot;wts&quot;:0},{&quot;qtyOrdered&quot;:1,&quot;qtyShipped&quot;:1,&quot;qtyBO&quot;:0,&quot;id&quot;:&quot;ZZZ-T4-GUARANTEEDFREIGHT&quot;,&quot;value&quot;:215,&quot;uom&quot;:&quot;EACH&quot;,&quot;description&quot;:&quot;GUARANTEED FREIGHT CHARGES TO THE CUSTOMER&quot;,&quot;wts&quot;:0}]}" name="data" required="true"/>
+    <field type="string" lastValue="" name="shippingPoint" required="true"/>
+    <field type="htmlstring" lastValue="" name="leadTime" required="true"/>
+    <field type="htmlstring" lastValue="DELIVER" name="shippingMethod" required="true"/>
+    <field type="htmlstring" lastValue="" name="shippingTerms" required="true"/>
+    <field type="htmlstring" lastValue="01/01/1900" name="shipDate" required="true"/>
+    <field type="htmlstring" lastValue="A-RENU0001" name="customerID" required="true"/>
+    <field type="htmlstring" lastValue="JEY41" name="territoryManager" required="true"/>
+    <field type="htmlstring" lastValue="CREDIT CARD" name="paymentTerms" required="true"/>
+    <field type="htmlstring" lastValue="RENU MEDICAL, INC" name="customer" required="true"/>
+    <field type="htmlstring" lastValue="daco" name="company" required="true"/>
+    <field type="htmlstring" lastValue="Customer Contact" name="contact" required="true"/>
+    <field type="string" lastValue="Total" name="weight" required="true"/>
+    <table name="detail" required="true">
+        <field type="string" lastValue="" name="ExtraData" required="true"/>
+        <field type="integer" lastValue="10" name="qtyOrdered" required="true"/>
+        <field type="integer" lastValue="10" name="qtyShipped" required="true"/>
+        <field type="integer" lastValue="0" name="qtyBO" required="true"/>
+        <field type="currency" lastValue="145.00" name="value" required="true"/>
+        <field type="htmlstring" lastValue="EACH" name="uom" required="true"/>
+        <field type="htmlstring" lastValue="UNA01-G013319244-GREEN" name="id" required="true"/>
+        <field type="htmlstring" lastValue="UPRIGHT - 44&quot; D X 192&quot; H - 3 X 3 CLOSED COLUMN 6&quot; X 6&quot; SIESMIC FOOT PLATE - TEARDROP -  NO SIDE HOLE" name="description" required="true"/>
+        <field type="integer" lastValue="141" name="wts" required="true"/>
+    </table>
+</datamodel>

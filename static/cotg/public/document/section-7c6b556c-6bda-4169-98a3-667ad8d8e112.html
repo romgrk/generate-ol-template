@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html section="pick-ticked" dpi="96" scale="1.0" style="transform-origin: 0px 0px 0px; transform: scale(1) translate(6px, 6px); width: 100%;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"><meta name="media-single"><meta name="media-first"><meta name="media-middle"><meta name="media-last"><script src="https://code.jquery.com/jquery-2.2.1.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script><script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script><script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script><script src="http://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.16.0/polyfill.min.js"></script><script src="js/app.js?r=aa70d662-696c-4cc0-90aa-269406400ac9"></script><link type="text/css" rel="stylesheet" href="css/style.css?r=1477419483568"><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css"><link type="text/css" rel="stylesheet" href="generated/__ol__font_definitions.css?r=1477419483571"></head><body style="" spellcheck="false" contenteditable="false"><main ng-app="dacoApp">
+    <form class="form form-horizontal" id="mainform" method="POST" ng-controller="mainCtrl as VM">
+      <input id="cotg_user" role="cotg.UserAccount" name="cotg_user" type="hidden">
+      <input id="form_data" name="data" type="hidden">
+      <nav class="navbar navbar-inverse">
+        <div class="container">
+          <div class="row navbar-text" style="width: 100%">
+            <div class="col-xs-3"><strong>Order: {{ VM.order.orderID }}</strong></div>
+            <div class="col-xs-3"><strong>Shepherd: {{ VM.order.shepherd }}</strong></div>
+            <div class="col-xs-3"><strong>Date: {{ VM.order.date }}</strong></div>
+          </div>
+        </div>
+      </nav>
+      <div class="container">
+        <div class="alert alert-{{VM.message.class}}" ng-show="!!VM.message.text">{{ VM.message.text }}</div>
+        <section class="row" id="customerInfo">
+          <div class="col-xs-12 col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Bill To</h3>
+              </div>
+              <div class="panel-body">
+                <div data-field="billToName">
+                  <pre>{{ VM.order.billTo }}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Ship To</h3>
+              </div>
+              <div class="panel-body">
+                <div data-field="shipToName">
+                  <pre>{{ VM.order.shipTo }}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="orderDetails">
+          <table class="table table-bordered table-striped">
+            <tbody>
+              <tr>
+                <th>Shipping Point</th>
+                <th>Lead Time</th>
+                <th>Shipping Method</th>
+                <th>Shipping Terms</th>
+                <th>Est Ship Date</th>
+              </tr>
+              <tr>
+                <td>{{ VM.order.shippingPoint }}</td>
+                <td>{{ VM.order.leadTime }}</td>
+                <td>{{ VM.order.shippingMethod }}</td>
+                <td>{{ VM.order.shippingTerms }}</td>
+                <td>{{ VM.order.shipDate }}</td>
+              </tr>
+              <tr>
+                <th>PO Number</th>
+                <th>Customer ID</th>
+                <th>Territory Manager</th>
+                <th>GSA Contact</th>
+                <th>Payment Terms</th>
+              </tr>
+              <tr>
+                <td>{{ VM.order.poNumber }}</td>
+                <td>{{ VM.order.customerID }}</td>
+                <td>{{ VM.order.territoryManager }}</td>
+                <td>{{ VM.order.gsaNumber }}</td>
+                <td>{{ VM.order.paymentTerms }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section id="orderItems">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Order detail</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th class="th-sm">Ordered</th>
+                    <th class="th-sm">Shipped</th>
+                    <th class="th-sm">Actual</th>
+                    <th class="th-sm">BO</th>
+                    <th>Item</th>
+                    <th class="th-sm">UOM</th>
+                    <th class="th-sm">WTS</th>
+                    <th class="th-sm">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in VM.order.items">
+                    <td class="text-center">{{ item.qtyOrdered }}</td>
+                    <td class="text-center">{{ item.qtyShipped }}</td>
+                    <td class="form-group" ng-class="{'has-error': (item.qtyPicked &gt; item.qtyShipped)}">
+                      <input class="form-control" ng-model="item.qtyPicked" ng-change="onDidChangeQuantity(item)" min="0" type="number">
+                    </td>
+                    <td class="text-center">{{ item.qtyBO }}</td>
+                    <td>{{ item.id }}<br>{{ item.description }}</td>
+                    <td class="text-center">{{ item.uom }}</td>
+                    <td class="text-right">{{ item.wts | number:2 }}</td>
+                    <td class="text-right">{{ item.value | currency }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th class="text-right" colspan="6">Totals :</th>
+                    <th class="text-right">{{ totalWeight() | number:2 }}</th>
+                    <th class="text-right">{{ totalValue() | currency }}</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section id="changeRequestForm" ng-show="hasBackOrders()">
+          <div class="row">
+            <div class="col-sm-6 col-sm-offset-6 text-right">
+              <textarea class="form-control" ng-model="VM.notes" name="notes" placeholder="Notes"></textarea><br>
+              <button class="btn btn-lg btn-danger" ng-click="onRequestChange()">Request change
+              </button>
+            </div>
+          </div>
+        </section><br>
+        <section id="orderPallets">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Shipment detail (packages)</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-center" style="width: 50px">#</th>
+                    <th>Description</th>
+                    <th>Photo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="shipment in VM.order.pallets">
+                    <td class="text-center"><span class="badge">{{$index + 1}}</span></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-xs-12"><span class="todo">TODO: units?</span></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-2">
+                          <label>L
+                            <input class="form-control" ng-model="shipment.L" min="0" type="number">
+                          </label>
+                        </div>
+                        <div class="col-xs-2">
+                          <label>W
+                            <input class="form-control" ng-model="shipment.W" min="0" type="number">
+                          </label>
+                        </div>
+                        <div class="col-xs-2">
+                          <label>H
+                            <input class="form-control" ng-model="shipment.H" min="0" type="number">
+                          </label>
+                        </div>
+                        <div class="col-xs-2">
+                          <label>weight:
+                            <input class="form-control" ng-model="shipment.weight" min="0" type="number">
+                          </label>
+                        </div>
+                        <div class="col-xs-2">{{ getVolume(shipment) | number:2}} cu.in</div>
+                        <div class="col-xs-2">{{ getWeightPerVolume(shipment) | number:2}} lbs / cu.in</div>
+                      </div><br>
+                      <div class="row">
+                        <div class="col-xs-8">
+                          <textarea class="form-control" ng-model="shipment.detail" rows="6"></textarea>
+                        </div>
+                        <div class="col-xs-4"><img class="img-fluid img-thumbnail" src="http://placehold.it/350x150" ng-src="{{VM.palletImages[$index]}}">
+                          <input value="{{VM.palletImages[$index]}}" name="pallet_{{$index}}_image" type="hidden">
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <button class="btn btn-lg btn-default" ng-click="deletePallet($index)" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                      </button><br><br>
+                      <button class="btn btn-lg btn-default" ng-click="addPalletPicture($index)" type="button"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="100%">
+                      <div class="pull-right">
+                        <button class="btn btn-lg btn-default" ng-click="addPallet()" type="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>  Add Pallet
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section id="contentAddInformation">
+          <h2>Additional information</h2>
+          <!-- Additional pictures-->
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Pictures</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-xs-6"><img class="img-thumbnail img-fluid" ng-click="addAdditionalPicture(0)" ng-src="{{ VM.additionalImages[0] }}" src="http://placehold.it/350x350">
+                  <input value="{{ VM.additionalImages[0] }}" name="additionalPicture1" type="hidden">
+                </div>
+                <div class="col-xs-6"><img class="img-thumbnail img-fluid" ng-click="addAdditionalPicture(1)" ng-src="{{ VM.additionalImages[1] }}" src="http://placehold.it/350x350">
+                  <input value="{{ VM.additionalImages[1] }}" name="additionalPicture2" type="hidden">
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ShippingInfo panel-->
+          <div class="row form-horizontal">
+            <div class="col-xs-12 col-sm-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Shipping information</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <label class="col-xs-4 control-label">Carrier</label>
+                      <div class="col-xs-8">
+                        <div class="form-group">
+                          <input class="form-control" name="carrier" ng-model="VM.order.carrier" type="text">
+                        </div>
+                      </div>
+                      <label class="col-xs-4 control-label">Tracking no</label>
+                      <div class="col-xs-8">
+                        <div class="input-group form-group" role="cotg.Barcode">
+                          <input class="form-control" id="barcodedata" role="barcode-data" ng-model="VM.order.barcode" type="text"><span class="input-group-btn">
+                            <button class="btn btn-md btn-default" role="scan-button" type="button"><span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span> Scan</button></span>
+                        </div>
+                      </div>
+                      <label class="col-xs-4 control-label">Ship date</label>
+                      <div class="col-xs-8">
+                        <div class="form-group">
+                          <input class="form-control" ng-model="VM.order.shipDate" type="date">
+                        </div>
+                      </div>
+                      <label class="col-xs-4 control-label">Total packages</label>
+                      <div class="col-xs-8">
+                        <div class="form-group">
+                          <p class="form-control-static">{{VM.order.pallets.length}}</p>
+                        </div>
+                      </div>
+                      <label class="col-xs-4 control-label">Total volume</label>
+                      <div class="col-xs-8">
+                        <div class="form-group">
+                          <p class="form-control-static">{{totalPalletVolume() | number:2}} cu.in</p>
+                        </div>
+                      </div>
+                      <label class="col-xs-4 control-label">Total weight</label>
+                      <div class="col-xs-8">
+                        <div class="form-group">
+                          <p class="form-control-static">{{totalPalletWeight() | number:2}} lbs</p>
+                        </div>
+                      </div>
+                      <div class="col-xs-8 col-xs-offset-4">
+                        <div class="checkbox">
+                          <label>
+                            <input ng-model="VM.order.isOrderPlaced" checked="checked" type="checkbox"><strong>Order placed</strong>
+                          </label>
+                        </div>
+                        <div class="checkbox">
+                          <label>
+                            <input ng-model="VM.order.isReady" type="checkbox"><strong>Carrier notified </strong><span class="todo">TODO: button?</span>
+                          </label>
+                        </div>
+                        <div class="checkbox">
+                          <label>
+                            <input ng-model="VM.order.isShipped" type="checkbox"><strong>Shipped</strong>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Signature panel-->
+            <div class="col-xs-12 col-sm-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Shipment validated</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="container-fluid">
+                    <div>
+                      <label class="control-label">Picked by</label>
+                    </div>
+                    <div>
+                      <div class="panel well" id="pickedBy" ng-click="onClickSignature('pickedBy')" ng-bind-html="VM.order.pickedBy | rawHtml"></div>
+                    </div>
+                    <div>
+                      <label class="control-label">Verified by</label>
+                    </div>
+                    <div>
+                      <div class="panel well" id="verifiedBy" ng-click="onClickSignature('verifiedBy')" ng-bind-html="VM.order.verifiedBy | rawHtml"></div>
+                    </div>
+                    <label class="col-xs-2 control-label">Date</label>
+                    <div class="col-xs-8">
+                      <div class="form-group">
+                        <input class="form-control" id="signatureDate" name="signatureDate" type="date">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="row" id="formClosing">
+          <div class="col-sm-3">
+            <button class="btn btn-lg btn-danger" ng-click="clear()" type="button">{{stats() + " KB"}} 
+            </button>
+          </div>
+          <div class="col-sm-3">
+            <button class="btn btn-lg btn-default" ng-click="save()" type="button">Save
+            </button>
+          </div>
+          <div class="col-sm-3">
+            <button class="btn btn-lg btn-primary" ng-click="onCarrierNotified()" type="button">Carrier notified
+            </button>
+          </div>
+          <div class="col-sm-3 pull-right text-right">
+            <button class="btn btn-lg btn-success" ng-click="onSubmit()" type="button">Complete
+            </button>
+          </div>
+        </section>
+        <section class="row">
+          <div class="col-sm-4 col-offset-md-8"><span>Config: ""</span></div>
+        </section><br>
+      </div>
+    </form>
+  </main></body></html>

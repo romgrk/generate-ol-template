@@ -5,13 +5,15 @@
  * Distributed under terms of the MIT license.
  */
 
+const Promise = require('bluebird')
 const fs = require('fs-extra');
 const { join, basename, dirname } = require('path');
 const util = require('util');
-const jsdom = require('jsdom').env;
 const xml = require('xml');
-const zip = require('zip-folder');
-const uuid = require('node-uuid');
+const rmdir = Promise.promisify(require('rimraf'))
+const zip = Promise.promisify(require('zip-folder'))
+const jsdom = Promise.promisify(require('jsdom').env);
+const uuid = require('node-uuid')
 const chalk = require('chalk')
 
 const log = (...args) => {
@@ -305,33 +307,39 @@ const generateOLTemplate = (input, output) => {
 
   let body = '';
 
-  const readHTML = (err, window) => {
+
+  jsdom(input, ['http://code.jquery.com/jquery.js'])
+  .then((err, window) => {
     const $ = window.$;
 
     $('head link[rel=stylesheet]').each(function (i, s) {
-      stylesheets.push($(this).attr('href'));
+      const el       = $(this)
+      stylesheets.push(el.attr('href'));
     });
 
     $('head script[src]').each(function (i, s) {
-      javascripts.push($(this).attr('src'));
+      const el       = $(this)
+      javascripts.push(el.attr('src'));
     });
 
     $('head script[connect]').each(function (i, s) {
-      const source   = escapeXml($(this).html());
-      const name     = $(this).attr('name');
-      const enabled  = $(this).attr('enabled');
-      const control  = $(this).attr('control');
-      const type     = $(this).attr('type');
-      const text     = $(this).attr('text');
-      const selector = $(this).attr('selector');
+      const el       = $(this)
+      const source   = escapeXml(el.html());
+      const name     = el.attr('name');
+      const enabled  = el.attr('enabled');
+      const control  = el.attr('control');
+      const type     = el.attr('type');
+      const text     = el.attr('text');
+      const selector = el.attr('selector');
       scripts.push({source, name, enabled, control, type, text, selector});
     });
 
     $('img[src]').each(function () {
-      const src = $(this).attr('src');
+      const el       = $(this)
+      const src = el.attr('src');
       if (!isRemote(src)) {
         images.push(src);
-        $(this).attr('src', join('images', basename(src)));
+        el.attr('src', join('images', basename(src)));
       }
     })
 
@@ -361,12 +369,13 @@ const generateOLTemplate = (input, output) => {
     const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context});
     fs.writeFileSync(join(output, 'index.xml'), xml(declaration, xmlOptions))
 
-    zip(output, `${output}.OL-template`, (err) => {
-      console.log(err || 'Done.')
+    zip(output, `${output}.OL-template`)
+    .then(() => rmdir(output))
+    .then(() => {
+      console.log(chalk.green('Done. Output written at:'), `${output}.OL-template`)
     })
-  }
-
-  jsdom(input, ['http://code.jquery.com/jquery.js'], readHTML);
+    .catch(err => console.log(err))
+  })
 }
 
 
@@ -386,3 +395,6 @@ const xmlOptions = {
 }
 
 generateOLTemplate(config.main, config.out);
+
+
+module.exports = generateOLTemplate

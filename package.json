@@ -2,7 +2,7 @@
   "name": "obj",
   "version": "1.0.0",
   "description": "",
-  "main": "build/index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
@@ -12,6 +12,7 @@
   "author": "romgrk",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^1.1.3",
     "fs-extra": "0.30.0",
     "isomorphic-fetch": "2.2.1",
     "jsdom": "9.4.2",

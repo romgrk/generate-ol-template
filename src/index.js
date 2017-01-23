@@ -12,6 +12,7 @@ const jsdom = require('jsdom').env;
 const xml = require('xml');
 const zip = require('zip-folder');
 const uuid = require('node-uuid');
+const chalk = require('chalk')
 
 const log = (...args) => {
   args.forEach((arg) => {
@@ -278,11 +279,18 @@ const copyResources = (path, base, files, ext) => {
       fs.writeFileSync(join(path, filename), file);
       return filename;
     } else {
+      let filepath = join(base, file)
       let filename = join('public', 'document', ext, basename(file));
-      fs.copySync(join(base, file), join(path, filename));
-      return filename;
+      if (fs.existsSync(filepath)) {
+        fs.copySync(filepath, join(path, filename));
+        return filename;
+      } else {
+        console.log(chalk.red(`Couldn't find ${filepath}`))
+        return ''
+      }
     }
   })
+  .filter(Boolean)
 }
 
 
@@ -366,7 +374,7 @@ const generateOLTemplate = (input, output) => {
 
 const config = {
   main: process.argv[2] || '/home/romgrk/projects/daco/public/quote_section.html'
-  , out: './out'
+  , out: process.argv[3] || './out'
 }
 
 const xmlOptions = {

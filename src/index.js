@@ -384,11 +384,6 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
 
 // Config
 
-const config = {
-  main: process.argv[2] || '/home/romgrk/projects/daco/public/quote_section.html'
-  , out: process.argv[3] || './out'
-}
-
 const xmlOptions = {
     declaration: {
         standalone: 'yes'
@@ -397,7 +392,12 @@ const xmlOptions = {
   , indent: '  '
 }
 
-generateOLTemplate(config.main, config.out);
+//const config = {
+  //main: process.argv[2] || '/home/romgrk/projects/daco/public/quote_section.html'
+  //, out: process.argv[3] || './out'
+//}
+
+//generateOLTemplate(config.main, config.out);
 
 
 module.exports = generateOLTemplate

@@ -298,7 +298,7 @@ const copyResources = (path, base, files, ext) => {
 
 // Template generation
 
-const generateOLTemplate = (input, output) => {
+const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
   let title = '';
   let images = [];
   let javascripts = [];
@@ -307,9 +307,8 @@ const generateOLTemplate = (input, output) => {
 
   let body = '';
 
-
   jsdom(input, ['http://code.jquery.com/jquery.js'])
-  .then((err, window) => {
+  .then(window => {
     const $ = window.$;
 
     $('head link[rel=stylesheet]').each(function (i, s) {
@@ -369,14 +368,18 @@ const generateOLTemplate = (input, output) => {
     const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context});
     fs.writeFileSync(join(output, 'index.xml'), xml(declaration, xmlOptions))
 
-    zip(output, `${output}.OL-template`)
+    return zip(output, `${output}.OL-template`)
     .then(() => rmdir(output))
     .then(() => {
       console.log(chalk.green('Done. Output written at:'), `${output}.OL-template`)
+      resolve()
     })
-    .catch(err => console.log(err))
   })
-}
+  .catch(err => {
+    console.log(err)
+    reject(err)
+  })
+})
 
 
 // Config

@@ -20,6 +20,7 @@
     "mkdirp": "0.5.1",
     "node-uuid": "1.4.7",
     "rimraf": "^2.5.4",
+    "sanitize-filename": "^1.6.1",
     "xml": "1.0.1",
     "zip-folder": "1.0.0"
   },

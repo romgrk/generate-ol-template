@@ -8,6 +8,7 @@
 const Promise = require('bluebird')
 const fs = require('fs-extra');
 const { join, basename, dirname } = require('path');
+const sanitize = require('sanitize-filename')
 const util = require('util');
 const xml = require('xml');
 const rmdir = Promise.promisify(require('rimraf'))
@@ -277,9 +278,10 @@ const makeFileStructure = (path) => {
 const copyResources = (path, base, files, ext) => {
   return files.map(file => {
     if (isRemote(file)) {
-      let filename = join('public', 'document', ext, 'external', basename(file, `.${ext}`) + `.r${ext}`);
-      fs.writeFileSync(join(path, filename), file);
-      return filename;
+      let name     = sanitize(basename(file, `.${ext}`))
+      let filename = join('public', 'document', ext, 'external', `${name}.r${ext}`)
+      fs.writeFileSync(join(path, filename), file)
+      return filename
     } else {
       let filepath = join(base, file)
       let filename = join('public', 'document', ext, basename(file));
@@ -296,56 +298,62 @@ const copyResources = (path, base, files, ext) => {
 }
 
 
+// Config
+
+const xmlOptions = {
+    declaration: {
+        standalone: 'yes'
+      , encoding: 'UTF-8'
+    }
+  , indent: '  '
+}
+
+
 // Template generation
 
 const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
-  let title = '';
   let images = [];
   let javascripts = [];
   let stylesheets = [];
   let scripts = [];
 
-  let body = '';
-
-  jsdom(input, ['http://code.jquery.com/jquery.js'])
+  jsdom(input, [])
   .then(window => {
-    const $ = window.$;
+    const doc = window.document
+    const $   = s => doc.querySelector(s)
+    const $$  = s => [].slice.call(doc.querySelectorAll(s))
 
-    $('head link[rel=stylesheet]').each(function (i, s) {
-      const el       = $(this)
-      stylesheets.push(el.attr('href'));
-    });
+    $$('head link[rel=stylesheet]').forEach((el) => {
+      stylesheets.push(el.getAttribute('href'));
+    })
 
-    $('head script[src]').each(function (i, s) {
-      const el       = $(this)
-      javascripts.push(el.attr('src'));
-    });
+    $$('head script[src]').forEach((el) => {
+      javascripts.push(el.getAttribute('src'));
+    })
 
-    $('head script[connect]').each(function (i, s) {
-      const el       = $(this)
-      const source   = escapeXml(el.html());
-      const name     = el.attr('name');
-      const enabled  = el.attr('enabled');
-      const control  = el.attr('control');
-      const type     = el.attr('type');
-      const text     = el.attr('text');
-      const selector = el.attr('selector');
+    $$('head script[connect]').forEach((el) => {
+      const source   = escapeXml(el.innerHTML)
+      const name     = el.getAttribute('name')
+      const enabled  = el.getAttribute('enabled')
+      const control  = el.getAttribute('control')
+      const type     = el.getAttribute('type')
+      const text     = el.getAttribute('text')
+      const selector = el.getAttribute('selector')
       scripts.push({source, name, enabled, control, type, text, selector});
-    });
+    })
 
-    $('img[src]').each(function () {
-      const el       = $(this)
-      const src = el.attr('src');
+    $$('img[src]').forEach((el) => {
+      const src = el.getAttribute('src');
       if (!isRemote(src)) {
         images.push(src);
-        el.attr('src', join('images', basename(src)));
+        el.setAttribute('src', join('images', basename(src)));
       }
     })
 
     makeFileStructure(output);
 
-    title = $('head title').text();
-    body = $('body').html();
+    const title = ($('title') || {}).innerText || output
+    const body  = $('body').innerHTML
 
     const html_base = dirname(input);
     images      = copyResources(output, html_base, images, 'images');
@@ -373,28 +381,6 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
     reject(err)
   })
 })
-
-
-// Config
-
-const xmlOptions = {
-    declaration: {
-        standalone: 'yes'
-      , encoding: 'UTF-8'
-    }
-  , indent: '  '
-}
-
-//const config = {
-  //main: process.argv[2] || '/home/romgrk/projects/daco/public/quote_section.html'
-  //, out: process.argv[3] || './out'
-//}
-
-//log(config);
-
-//generateOLTemplate(config.main, config.out);
-//console.log(err)
-//console.log(chalk.green('Done. Output written at:'), `${output}.OL-template`)
 
 
 module.exports = generateOLTemplate

@@ -17,6 +17,9 @@ const jsdom = Promise.promisify(require('jsdom').env);
 const uuid = require('node-uuid')
 const chalk = require('chalk')
 
+const unixJoin = (...args) =>
+  args.join('/')
+
 const log = (...args) => {
   args.forEach((arg) => {
     console.log(util.inspect(arg, {colors: true}));
@@ -279,12 +282,12 @@ const copyResources = (path, base, files, ext) => {
   return files.map(file => {
     if (isRemote(file)) {
       let name     = sanitize(basename(file, `.${ext}`))
-      let filename = join('public', 'document', ext, 'external', `${name}.r${ext}`)
+      let filename = unixJoin('public', 'document', ext, 'external', `${name}.r${ext}`)
       fs.writeFileSync(join(path, filename), file)
       return filename
     } else {
       let filepath = join(base, file)
-      let filename = join('public', 'document', ext, basename(file));
+      let filename = unixJoin('public', 'document', ext, basename(file));
       if (fs.existsSync(filepath)) {
         fs.copySync(filepath, join(path, filename));
         return filename;

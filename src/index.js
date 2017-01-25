@@ -228,7 +228,7 @@ const getNewManifest = (options) => {
       , { contexts: [getNewContext(options.context, options.index)] }
       , { fontDefinitions: [] }
       , { fonts: [] }
-      , { images: [] }
+      , { images: images }
       , { javascripts: javascripts }
       , { masters: [] }
       , { medias: [] }
@@ -293,7 +293,7 @@ const copyResources = (path, base, files, ext) => {
         return filename;
       } else {
         console.log(chalk.red(`Couldn't find ${filepath}`))
-        return ''
+        return false
       }
     }
   })

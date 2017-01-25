@@ -342,10 +342,6 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
       }
     })
 
-
-    log(config);
-    log(body.length);
-
     makeFileStructure(output);
 
     title = $('head title').text();
@@ -356,10 +352,9 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
     javascripts = copyResources(output, html_base, javascripts, 'js');
     stylesheets = copyResources(output, html_base, stylesheets, 'css');
 
-
-    log(javascripts);
-    log(stylesheets);
-    log(scripts);
+    //log(javascripts);
+    //log(stylesheets);
+    //log(scripts);
 
     const index = join('public', 'document', `section-${uuid.v4()}.html`);
     const context = id(index + '-context')
@@ -371,12 +366,10 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
     return zip(output, `${output}.OL-template`)
     .then(() => rmdir(output))
     .then(() => {
-      console.log(chalk.green('Done. Output written at:'), `${output}.OL-template`)
       resolve()
     })
   })
   .catch(err => {
-    console.log(err)
     reject(err)
   })
 })
@@ -397,7 +390,11 @@ const xmlOptions = {
   //, out: process.argv[3] || './out'
 //}
 
+//log(config);
+
 //generateOLTemplate(config.main, config.out);
+//console.log(err)
+//console.log(chalk.green('Done. Output written at:'), `${output}.OL-template`)
 
 
 module.exports = generateOLTemplate

@@ -136,7 +136,7 @@ const getNewSection = (filename, options) => ({
       _attr: { id: id(filename) }
     , location: filename
     , context: options.context
-    , name: '' // TODO
+    , name: opt(options.name, 'default')
     , size: {
       name: 'Custom'
       , width: '100%'
@@ -378,6 +378,9 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
 
     const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context});
     fs.writeFileSync(join(output, 'index.xml'), xml(declaration, xmlOptions))
+
+    const migration = '2017-02-03 11:14:56 Template migrated from 1.0.0.19 to 1.0.0.2\r\n'
+    fs.writeFileSync(join(output, 'migration.txt'), migration)
 
     return zip(output, `${output}.OL-template`)
     .then(() => rmdir(output))

@@ -26,6 +26,9 @@ const log = (...args) => {
   })
 }
 
+const trimLeft = (text) =>
+  text.replace(/^\s*/gm, '')
+
 const opt = (value, defaultValue) =>
   value == undefined ? defaultValue : value
 
@@ -53,6 +56,8 @@ const XML_CHAR_MAP = {
 const escapeXml = (s) =>
   s.replace(/[<>&"']/g, (ch) => XML_CHAR_MAP[ch] )
 
+const escapeLtGt = (s) =>
+  s.replace(/[<>]/g, (ch) => XML_CHAR_MAP[ch] )
 
 const attr = (obj) => ({ _attr: obj });
 
@@ -335,7 +340,7 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
     })
 
     $$('head script[type="application/connect"]').forEach((el) => {
-      const source   = escapeXml(el.innerHTML)
+      const source   = trimLeft(escapeLtGt(el.innerHTML))
       const name     = el.getAttribute('name')
       const enabled  = el.getAttribute('enabled')
       const control  = el.getAttribute('control')

@@ -334,14 +334,14 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
       javascripts.push(el.getAttribute('src'));
     })
 
-    $$('head script[connect]').forEach((el) => {
+    $$('head script[type="application/connect"]').forEach((el) => {
       const source   = escapeXml(el.innerHTML)
       const name     = el.getAttribute('name')
       const enabled  = el.getAttribute('enabled')
       const control  = el.getAttribute('control')
-      const type     = el.getAttribute('type')
-      const text     = el.getAttribute('text')
-      const selector = el.getAttribute('selector')
+      const type     = el.getAttribute('selectorType')
+      const selector = el.getAttribute('selectorText')
+      const text     = el.getAttribute('findText')
       scripts.push({source, name, enabled, control, type, text, selector});
     })
 

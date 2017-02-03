@@ -340,7 +340,7 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
     })
 
     $$('head script[type="application/connect"]').forEach((el) => {
-      const source   = trimLeft(escapeLtGt(el.innerHTML))
+      const source   = trimLeft(el.innerHTML)
       const name     = el.getAttribute('name')
       const enabled  = el.getAttribute('enabled')
       const control  = el.getAttribute('control')

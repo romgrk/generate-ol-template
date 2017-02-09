@@ -360,7 +360,7 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
 
     makeFileStructure(output);
 
-    const title = ($('title') || {}).innerText || output
+    const title = ($('title') || {}).textContent || output
     const body  = $('body').innerHTML
 
     const html_base = dirname(input);

@@ -4,9 +4,10 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "build:watch": "webpack --watch"
+    "test": "node ./test.js"
+  },
+  "bin": {
+    "generate-ol-template": "bin/generate-ol-template.js"
   },
   "keywords": [],
   "author": "romgrk",

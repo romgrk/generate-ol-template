@@ -42,3 +42,14 @@ generateOLTemplate(input, output)
   .catch(err => console.log('Error', err))
 
 ```
+
+## Command line tool
+
+```shell
+generate-ol-template ./path/to/index.html [./path/to/out]
+```
+
+Will generate the template at `./path/to/out.OL-template`, or
+`./path/to/index.OL-template` if no second parameter is given.
+Keep in mind that there will be a temporary folder created during the
+build: `./path/to/out`.

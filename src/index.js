@@ -6,8 +6,9 @@
  */
 
 const Promise = require('bluebird')
-const fs = require('fs-extra');
-const { join, basename, dirname } = require('path');
+const os = require('os')
+const fs = require('fs-extra')
+const { join, basename, dirname } = require('path')
 const sanitize = require('sanitize-filename')
 const util = require('util');
 const xml = require('xml');
@@ -358,15 +359,17 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
       }
     })
 
-    makeFileStructure(output);
+    const build = join(os.tmpdir(), uuid.v4())
+
+    makeFileStructure(build);
 
     const title = ($('title') || {}).textContent || output
     const body  = $('body').innerHTML
 
     const html_base = dirname(input);
-    images      = copyResources(output, html_base, images, 'images');
-    javascripts = copyResources(output, html_base, javascripts, 'js');
-    stylesheets = copyResources(output, html_base, stylesheets, 'css');
+    images      = copyResources(build, html_base, images, 'images');
+    javascripts = copyResources(build, html_base, javascripts, 'js');
+    stylesheets = copyResources(build, html_base, stylesheets, 'css');
 
     //log(javascripts);
     //log(stylesheets);
@@ -374,16 +377,16 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
 
     const index = join('public', 'document', `section-${uuid.v4()}.html`);
     const context = id(index + '-context')
-    fs.writeFileSync(join(output, index), body);
+    fs.writeFileSync(join(build, index), body);
 
     const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context});
-    fs.writeFileSync(join(output, 'index.xml'), xml(declaration, xmlOptions))
+    fs.writeFileSync(join(build, 'index.xml'), xml(declaration, xmlOptions))
 
     const migration = '2017-02-03 11:14:56 Template migrated from 1.0.0.19 to 1.0.0.2\r\n'
-    fs.writeFileSync(join(output, 'migration.txt'), migration)
+    fs.writeFileSync(join(build, 'migration.txt'), migration)
 
-    return zip(output, `${output}.OL-template`)
-    .then(() => rmdir(output))
+    return zip(build, output)
+    .then(() => rmdir(build))
     .then(() => {
       resolve()
     })

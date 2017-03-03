@@ -17,11 +17,10 @@ const input  = '/path/to/index.html'
  * All remote resources are configured in the template.
  */
 
-const output = './build'
+const output = './build.OL-template'
 
 /*
- * A temporary folder named './build' will be created while building the
- * zip file structure.
+ * Zip file structure:
  *
  * build/
  *   public/
@@ -46,10 +45,8 @@ generateOLTemplate(input, output)
 ## Command line tool
 
 ```shell
-generate-ol-template ./path/to/index.html [./path/to/out]
+generate-ol-template ./path/to/index.html [./path/to/build.OL-template]
 ```
 
-Will generate the template at `./path/to/out.OL-template`, or
-`./path/to/index.OL-template` if no second parameter is given.
-Keep in mind that there will be a temporary folder created during the
-build: `./path/to/out`.
+Will generate the template at `./path/to/build.OL-template`, or
+`./index.OL-template` if no second parameter is given.

@@ -123,6 +123,14 @@ const getNewScript = (options) => ({
   ]
 })
 
+const getNewMeta = (meta) => ({
+  'web-meta-info': [
+      { 'meta-info-attribute': meta.attribute }
+    , { 'meta-info-value': meta.value }
+    , { 'meta-info-content': meta.content }
+  ]
+})
+
 const getNewContext = (res, filename) => ({
   context: children({
       _attr: { id: res }
@@ -133,50 +141,53 @@ const getNewContext = (res, filename) => ({
 })
 
 const getNewSection = (filename, options) => ({
-  section: children({
-      _attr: { id: id(filename) }
-    , location: filename
-    , context: options.context
-    , name: opt(options.name, 'default')
-    , size: {
-      name: 'Custom'
-      , width: '100%'
-      , height: '100%'
-    }
-    , 'portrait': 'true'
-    , 'left-margin': '0cm'
-    , 'top-margin': '0cm'
-    , 'right-margin': '0cm'
-    , 'bottom-margin': '0cm'
-    , 'left-bleed': '3mm'
-    , 'top-bleed': '3mm'
-    , 'right-bleed': '3mm'
-    , 'bottom-bleed': '3mm'
-    , 'zoomLevel': '100%'
-    , styleSheetOrder: options.stylesheets.map(id)
-    , includedStyleSheets: options.stylesheets.map(id)
-    , javaScriptOrder: options.javascripts.map(id)
-    , includedJavaScripts: options.javascripts.map(id)
-    , finishing: {
-        binding: {
-            style: 'NONE'
-          , edge: 'DEFAULT'
-          , type: 'DEFAULT'
-          , angle: 'DEFAULT'
-          , 'item-count': '0'
-          , area: '0cm'
-        }
-    }
-    , sectionBackground: ''
-    , duplex: 'false'
-    , 'web-pageTitle': options.title
-    , guides: ''
-    , tumble: 'false'
-    , facingPages: 'false'
-    , sameSheetConfigForAll: 'false'
-    , masterSheets: ''
-  }
-)})
+  section: [
+      { _attr: { id: id(filename) } }
+    , { location: filename }
+    , { context: options.context }
+    , { name: opt(options.name, 'default') }
+    , { size: [
+        { name: 'Custom' }
+      , { width: '100%' }
+      , { height: '100%' }
+      ]}
+    , { 'portrait': 'true' }
+    , { 'left-margin': '0cm' }
+    , { 'top-margin': '0cm' }
+    , { 'right-margin': '0cm' }
+    , { 'bottom-margin': '0cm' }
+    , { 'left-bleed': '3mm' }
+    , { 'top-bleed': '3mm' }
+    , { 'right-bleed': '3mm' }
+    , { 'bottom-bleed': '3mm' }
+    , { 'zoomLevel': '100%' }
+    , { styleSheetOrder: options.stylesheets.map(id) }
+    , { includedStyleSheets: options.stylesheets.map(id) }
+    , { javaScriptOrder: options.javascripts.map(id) }
+    , { includedJavaScripts: options.javascripts.map(id) }
+    , { finishing: [
+        { binding: [
+            { style: 'NONE' }
+          , { edge: 'DEFAULT' }
+          , { type: 'DEFAULT' }
+          , { angle: 'DEFAULT' }
+          , { 'item-count': '0' }
+          , { area: '0cm' }
+        ]}
+      ]}
+    , { sectionBackground: '' }
+    , { duplex: 'false' }
+    , { 'web-pageTitle': options.title }
+  ]
+  .concat(options.metas.map(getNewMeta))
+  .concat([
+    , { guides: '' }
+    , { tumble: 'false' }
+    , { facingPages: 'false' }
+    , { sameSheetConfigForAll: 'false' }
+    , { masterSheets: '' }
+  ])
+})
 
 const getNewDeclaration = (options) => ({
   package: [
@@ -325,6 +336,7 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
   let javascripts = [];
   let stylesheets = [];
   let scripts = [];
+  let metas = [];
 
   jsdom(input, [])
   .then(window => {
@@ -349,6 +361,18 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
       const selector = el.getAttribute('selectorText')
       const text     = el.getAttribute('findText')
       scripts.push({source, name, enabled, control, type, text, selector});
+    })
+
+    $$('head meta[name]').forEach((el) => {
+      const value    = el.getAttribute('name')
+      const content  = el.getAttribute('content')
+      metas.push({attribute: 'NAME', value, content});
+    })
+
+    $$('head meta[http-equiv]').forEach((el) => {
+      const value    = el.getAttribute('http-equiv')
+      const content  = el.getAttribute('content')
+      metas.push({attribute: 'HTTP_EQUIV', value, content});
     })
 
     $$('img[src]').forEach((el) => {
@@ -379,7 +403,7 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
     const context = id(index + '-context')
     fs.writeFileSync(join(build, index), body);
 
-    const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context});
+    const declaration = getNewDeclaration({index, title, images, javascripts, stylesheets, scripts, context, metas});
     fs.writeFileSync(join(build, 'index.xml'), xml(declaration, xmlOptions))
 
     const migration = '2017-02-03 11:14:56 Template migrated from 1.0.0.19 to 1.0.0.2\r\n'

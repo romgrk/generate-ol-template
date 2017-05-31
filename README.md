@@ -20,19 +20,6 @@ const input  = '/path/to/index.html'
 const output = './build.OL-template'
 
 /*
- * Zip file structure:
- *
- * build/
- *   public/
- *     document/
- *       css/
- *         ** all css files
- *       js/
- *         ** all js files
- *       images/
- *         ** all images
- *   index.xml
- *
  * The output file will be written to './build.OL-template'
  */
 
@@ -51,7 +38,7 @@ generate-ol-template ./path/to/index.html [./path/to/build.OL-template]
 Will generate the template at `./path/to/build.OL-template`, or
 `./index.OL-template` if no second parameter is given.
 
-## Other
+## Connect Scripts
 
 It is possible to write Connect Designer scripts directly in the HTML file 
 and have them in the generated template. To do so, place a script in the
@@ -79,4 +66,10 @@ E.g.:
 | `selectorText` | Selector text (if applicable)   | e.g `.table-blue`                     |
 | `findText`     | Text to replace (if applicable) | e.g `@email@`                         |
 
+
+## Metas
+
+`<meta name="...">` and `<meta http-equiv="...">` tags are also extracted from
+the html and configured in the resulting template. (Those are the only two meta
+tags supported by Designer)
 

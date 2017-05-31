@@ -1,0 +1,6 @@
+/*
+ * main.js
+ */
+
+
+alert('ok')

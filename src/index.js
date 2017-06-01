@@ -411,9 +411,8 @@ const generateOLTemplate = (input, output) => new Promise((resolve, reject) => {
 
     return zip(build, output)
     .then(() => rmdir(build))
-    .then(() => {
-      resolve()
-    })
+    .then(resolve)
+    .catch(reject)
   })
   .catch(err => {
     reject(err)

@@ -23,7 +23,7 @@ const unixJoin = (...args) =>
 
 const log = (...args) => {
   args.forEach((arg) => {
-    console.log(util.inspect(arg, {colors: true}));
+    console.log(util.inspect(arg, {colors: true, depth: 10}));
   })
 }
 
@@ -161,11 +161,13 @@ const getNewSection = (filename, options) => ({
     , { 'right-bleed': '3mm' }
     , { 'bottom-bleed': '3mm' }
     , { 'zoomLevel': '100%' }
-    , { styleSheetOrder: options.stylesheets.map(id) }
-    , { includedStyleSheets: options.stylesheets.map(id) }
-    , { javaScriptOrder: options.javascripts.map(id) }
-    , { includedJavaScripts: options.javascripts.map(id) }
-    , { finishing: [
+  ]
+  .concat(options.stylesheets.map(s => ({ styleSheetOrder: id(s) })))
+  .concat(options.stylesheets.map(s => ({ includedStyleSheets: id(s) })))
+  .concat(options.javascripts.map(j => ({ javaScriptOrder: id(j) })))
+  .concat(options.javascripts.map(j => ({ includedJavaScripts: id(j) })))
+  .concat([
+      { finishing: [
         { binding: [
             { style: 'NONE' }
           , { edge: 'DEFAULT' }
@@ -178,7 +180,7 @@ const getNewSection = (filename, options) => ({
     , { sectionBackground: '' }
     , { duplex: 'false' }
     , { 'web-pageTitle': options.title }
-  ]
+  ])
   .concat(options.metas.map(getNewMeta))
   .concat([
     , { guides: '' }

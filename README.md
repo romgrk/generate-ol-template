@@ -1,12 +1,12 @@
 
-# Obj
+# generate-ol-template
 
 Generate `.OL-template` files from `.html` files.
 This script can handle local and remote resources (javascript, CSS, images).
 
 Usage:
 ```javascript
-const generateOLTemplate = require('obj')
+const generateOLTemplate = require('generate-ol-template')
 
 const input  = '/path/to/index.html'
 
@@ -27,6 +27,12 @@ generateOLTemplate(input, output)
   .then(() => console.log('Done.'))
   .catch(err => console.log('Error', err))
 
+```
+
+## Install
+
+```shell
+npm install -g https://github.com/romgrk/generate-ol-template
 ```
 
 ## Command line tool
